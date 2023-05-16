@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target":"ES6",
+    "module": "NodeNext",
+    "noEmit": true,
+    "baseUrl": ".",
+    "rootDir": "src",
+    "paths": {
+      "@config/*": ["src/config/*"],
+      "@routes/*": ["src/routes/*"],
+      "@validators/*": ["src/validators/*"],
+      "@errors/*": ["src/errors/*"]
+    },
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node"
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "src/app.d.ts"
+  ]
+}
