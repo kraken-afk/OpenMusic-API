@@ -1,7 +1,7 @@
-#OpenMusic-API
+# OpenMusic-API
 Assignment for Dicoding back-end fundamental class.
 
-##Built with
+## Built with
 - TypeScript
 - Prisma
 - NodeJs
