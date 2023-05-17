@@ -1,46 +1,53 @@
-import { Router, type Response, type Request } from "express";
+import AlbumsModel from "../models/AlbumsModel";
 import validateAlbumCreation from "../validators/albumsValidator";
 import { AlbumsCreation, AlbumsResponse } from "../app.d";
-import AlbumsModel from "../models/AlbumsModel";
+import { Buffer } from "node:buffer";
+import { ResponseToolkit } from "hapi";
+import type { ServerRoute, Request } from "@hapi/hapi";
 
-const router = Router();
+const getAlbumsRouter: ServerRoute = {
+  path: "/albums/{id}",
+  method: "GET",
+  handler: async (req: Request, h: ResponseToolkit) => {
+    const { id } = req.params;
+    const album = await AlbumsModel.get(id);
+    let response: AlbumsResponse;
 
-router.get("/:id", async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
-  const album = await AlbumsModel.get(id);
-  let response: AlbumsResponse;
+    if (!album)
+      response = {
+        status: "fail",
+        code: 404,
+        message: "Album not found",
+      };
+    else
+      response = {
+        status: "success",
+        code: 200,
+        data: {
+          album,
+        },
+      };
 
-  if (!album)
-    response = {
-      status: "fail",
-      code: 404,
-      message: "Album not found",
-    };
-  else
-    response = {
-      status: "success",
-      code: 200,
-      data: {
-        album,
-      },
-    };
-
-  res
-    .setHeader("Content-Type", "application/json")
-    .setHeader(
+    const res = h.response(response).code(response.code);
+    res.header("Content-Type", "application/json");
+    res.header(
       "Content-Length",
-      Buffer.byteLength(JSON.stringify(response), "utf-8")
-    )
-    .status(response.code)
-    .send(response);
-});
+      String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+    );
 
-router.post(
-  "/",
-  validateAlbumCreation,
-  async (req: Request, res: Response): Promise<void> => {
-    const album: AlbumsCreation = req.body;
-    const dbResponse = await AlbumsModel.create(album);
+    return res;
+  },
+};
+
+const createAlbumRouter: ServerRoute = {
+  path: "/albums",
+  method: "POST",
+  handler: async (req: Request, h: ResponseToolkit) => {
+
+    if ("invalidResponse" in req.app) return req.app.invalidResponse;
+
+    const { name, year } = req.payload as AlbumsCreation;
+    const dbResponse = await AlbumsModel.create({ name, year });
     let response: AlbumsResponse;
 
     if (!dbResponse.status)
@@ -58,24 +65,29 @@ router.post(
         },
       };
 
-    res
-      .setHeader("Content-Type", "application/json")
-      .setHeader(
-        "Content-Length",
-        Buffer.byteLength(JSON.stringify(response), "utf-8")
-      )
-      .status(response.code)
-      .send(response);
-  }
-);
+    const res = h.response(response).code(response.code);
+    res.header("Content-Type", "application/json");
+    res.header(
+      "Content-Length",
+      String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+    );
 
-router.put(
-  "/:id",
-  validateAlbumCreation,
-  async (req: Request, res: Response): Promise<void> => {
+    return res;
+  },
+  options: {
+    pre: [{ method: validateAlbumCreation }],
+  },
+};
+
+const updateAlbumsRouter: ServerRoute = {
+  path: "/albums/{id}",
+  method: "PUT",
+  handler: async (req: Request, h: ResponseToolkit) => {
+    if ("invalidResponse" in req.app) return req.app.invalidResponse;
+
     const { id } = req.params;
-    const { name, year } = req.body;
-    const { status } = await AlbumsModel.update(id, { name, year });
+    const album = req.payload as AlbumsCreation;
+    const { status } = await AlbumsModel.update(id, album);
     let response: AlbumsResponse;
 
     if (!status)
@@ -91,20 +103,24 @@ router.put(
         message: "Album has been updated",
       };
 
-    res
-      .setHeader("Content-Type", "application/json")
-      .setHeader(
-        "Content-Length",
-        Buffer.byteLength(JSON.stringify(response), "utf-8")
-      )
-      .status(response.code)
-      .send(response);
-  }
-);
+    const res = h.response(response).code(response.code);
+    res.header("Content-Type", "application/json");
+    res.header(
+      "Content-Length",
+      String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+    );
 
-router.delete(
-  "/:id",
-  async (req: Request, res: Response): Promise<void> => {
+    return res;
+  },
+  options: {
+    pre: [{ method: validateAlbumCreation }],
+  },
+};
+
+const deleteAlbumsRouter: ServerRoute = {
+  path: "/albums/{id}",
+  method: "DELETE",
+  handler: async (req: Request, h: ResponseToolkit) => {
     const { id } = req.params;
     const { status } = await AlbumsModel.remove(id);
     let response: AlbumsResponse;
@@ -122,16 +138,22 @@ router.delete(
         message: "Album has been removed",
       };
 
-    res
-      .setHeader("Content-Type", "application/json")
-      .setHeader(
-        "Content-Length",
-        Buffer.byteLength(JSON.stringify(response), "utf-8")
-      )
-      .status(response.code)
-      .send(response);
-  }
-);
+    const res = h.response(response).code(response.code);
+    res.header("Content-Type", "application/json");
+    res.header(
+      "Content-Length",
+      String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+    );
 
-const AlbumRouter = router;
-export default AlbumRouter;
+    return res;
+  },
+};
+
+const AlbumsRouter = {
+  get: getAlbumsRouter,
+  create: createAlbumRouter,
+  update: updateAlbumsRouter,
+  delete: deleteAlbumsRouter,
+};
+
+export default AlbumsRouter;

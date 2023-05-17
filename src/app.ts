@@ -1,20 +1,21 @@
-import express, { type Express, type Request, type Response } from 'express';
-import { json } from 'body-parser'
-import * as http from 'node:http';
-import AlbumRouter from './routes/albums';
+import * as Hapi from "@hapi/hapi";
+import AlbumsRouter from "./routes/albums";
 
-const app: Express = express();
-const hostname = '127.0.0.1';
-const port = 5000;
-
-app.use(json());
-app.use('/albums', AlbumRouter);
-
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello');
-});
-
-http.createServer(app)
-  .listen(port, hostname, (): void => {
-    console.log(`Server is running on http://${hostname}:${port}`);
+async function init() {
+  const port = 5000;
+  const host = "127.0.0.1";
+  const server = Hapi.server({
+    port,
+    host,
   });
+
+  server.route(AlbumsRouter.get);
+  server.route(AlbumsRouter.create);
+  server.route(AlbumsRouter.update);
+  server.route(AlbumsRouter.delete);
+
+  await server.start();
+  console.log(`Server running on %s`, server.info.uri);
+}
+
+init();

@@ -1,23 +1,35 @@
-import { type Request, type Response } from 'express';
-import type { AlbumsResponse } from '../app.d';
+import { Request, ResponseToolkit } from "@hapi/hapi";
+import type { AlbumsCreation, AlbumsResponse } from "../app.d";
 
-export default function validateAlbumCreation(req: Request, res: Response, next: CallableFunction): void {
-  const payload = req.body;
+export default function validateAlbumCreation(
+  req: Request,
+  h: ResponseToolkit
+) {
+  const payload = req.payload as AlbumsCreation;
 
-  if (('name' in payload) && ('year' in payload) && (typeof payload.name === 'string' && !isNaN(parseInt(payload.year))))
-    next();
+  if (
+    "name" in payload &&
+    "year" in payload &&
+    typeof payload.name === "string" &&
+    typeof payload.year === "number"
+  )
+    return h.continue;
   else {
     const { stringify: s } = JSON;
     const response: AlbumsResponse = {
-      status: 'fail',
+      status: "fail",
       code: 400,
-      message: 'Invalid request body. Name<string> and Year<number> are required.'
+      message:
+        "Invalid request body. Name<string> and Year<number> are required.",
     };
 
-
-    res.setHeader('Content-Type', 'application/json')
-      .setHeader('Content-Length', Buffer.byteLength(s(response), 'utf-8'))
-      .status(400)
-      .send(s(response));
+    const res = h.response(response).code(response.code);
+    res.header("Content-Type", "application/json");
+    res.header(
+      "Content-Length",
+      String(Buffer.byteLength(s(response), "utf-8"))
+    );
+    req.app = { invalidResponse: res };
+    return res;
   }
 }
