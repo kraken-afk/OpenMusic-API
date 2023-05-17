@@ -78,4 +78,28 @@ export default abstract class AlbumsModel {
       prisma.$disconnect();
     }
   }
+
+  static async remove(
+    id: string
+  ): Promise<
+    DatabaseResponsePositive<{ message: string }> | DatabaseResponseNegative
+  > {
+    const prisma = new PrismaClient(PrismaScheme);
+    try {
+      await prisma.albums.delete({ where: { id } });
+      const response: DatabaseResponsePositive<{ message: string }> = {
+        status: true,
+        data: { message: `Album of id: '${id} has been removed.'` },
+      };
+      return response;
+    } catch (error) {
+      const response: DatabaseResponseNegative = {
+        status: false,
+        message: error?.message ?? "Album not found",
+      };
+      return response;
+    } finally {
+      prisma.$disconnect();
+    }
+  }
 }
