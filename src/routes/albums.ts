@@ -33,7 +33,6 @@ router.get('/:id', async (req: Request, res: Response): Promise<void> => {
 
 router.post('/', validateAlbumCreation, async (req: Request, res: Response): Promise<void> => {
   const album: AlbumsCreation = req.body;
-  console.log('1');
   const dbResponse = await AlbumsModel.create(album);
   let response: AlbumsResponse;
 
