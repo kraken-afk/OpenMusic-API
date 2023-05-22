@@ -19,9 +19,47 @@ export type Album = AlbumsCreation & { id: string }
 export type DataAlbumCreated = { albumId: string };
 
 ////////////////////////////////////////////
+//             Songs Scope               //
+//////////////////////////////////////////
+
+export type SongsCreation = {
+  title: string,
+  year: number,
+  genre: string,
+  performer: string,
+  duration?: number,
+  albumId?: string,
+}
+
+export type Songs = {
+  id: string,
+  title: string,
+  performer: string,
+};
+
+export type Song = {
+  id: string;
+  title: string;
+  year: number;
+  performer: string;
+  genre: string;
+  duration?: number;
+  albumId?: string;
+};
+
+export type SongsResponse = {
+  status: "success" | "fail";
+  code: number;
+  data?: { songId: string } | { songs: Songs[] } | { song: Song };
+  message?: string;
+};
+
+////////////////////////////////////////////
 //             Models Scope              //
 //////////////////////////////////////////
 
 export type DatabaseResponsePositive<T extends Object> = { status: true, data: T };
 
 export type DatabaseResponseNegative = { status: false, message: string };
+
+export type DatabaseResponse<T extends Object> = DatabaseResponsePositive<T> | DatabaseResponseNegative;

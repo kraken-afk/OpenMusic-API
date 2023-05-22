@@ -15,12 +15,12 @@ model albums {
 }
 
 model songs {
-  id        String @id @db.VarChar(255)
-  title     String @db.VarChar(255)
+  id        String  @id @db.VarChar(255)
+  title     String  @db.VarChar(255)
   year      Int
-  performer String @db.VarChar(255)
-  genre     String @db.VarChar(255)
-  duration  Int
-  album_id  String @db.VarChar(255)
-  albums    albums @relation(fields: [album_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  performer String  @db.VarChar(255)
+  genre     String  @db.VarChar(255)
+  duration  Int?
+  albumId   String? @db.VarChar(255)
+  albums    albums? @relation(fields: [albumId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "songs_album_id_fkey")
 }

@@ -1,5 +1,5 @@
 import * as Hapi from "@hapi/hapi";
-import AlbumsRouter from "./routes/albums";
+import { router } from "./routes";
 
 async function init() {
   const port = 5000;
@@ -9,10 +9,7 @@ async function init() {
     host,
   });
 
-  server.route(AlbumsRouter.get);
-  server.route(AlbumsRouter.create);
-  server.route(AlbumsRouter.update);
-  server.route(AlbumsRouter.delete);
+  server.route(Object.values(router));
 
   await server.start();
   console.log(`Server running on %s`, server.info.uri);

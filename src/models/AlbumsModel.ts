@@ -3,6 +3,7 @@ import {
   Album,
   AlbumsCreation,
   DataAlbumCreated,
+  DatabaseResponse,
   DatabaseResponseNegative,
   DatabaseResponsePositive,
 } from "../app.d";
@@ -12,9 +13,7 @@ import shortid from "shortid";
 export default abstract class AlbumsModel {
   static async create(
     data: AlbumsCreation
-  ): Promise<
-    DatabaseResponsePositive<DataAlbumCreated> | DatabaseResponseNegative
-  > {
+  ): Promise<DatabaseResponse<DataAlbumCreated>> {
     const prisma = new PrismaClient(PrismaScheme);
     const id = shortid.generate();
 
@@ -54,9 +53,7 @@ export default abstract class AlbumsModel {
   static async update(
     id: string,
     { name, year }: AlbumsCreation
-  ): Promise<
-    DatabaseResponsePositive<{ message: string }> | DatabaseResponseNegative
-  > {
+  ): Promise<DatabaseResponse<{ message: string }>> {
     const prisma = new PrismaClient(PrismaScheme);
     try {
       await prisma.albums.update({
@@ -81,9 +78,7 @@ export default abstract class AlbumsModel {
 
   static async remove(
     id: string
-  ): Promise<
-    DatabaseResponsePositive<{ message: string }> | DatabaseResponseNegative
-  > {
+  ): Promise<DatabaseResponse<{ message: string }>> {
     const prisma = new PrismaClient(PrismaScheme);
     try {
       await prisma.albums.delete({ where: { id } });

@@ -5,7 +5,7 @@ import { Buffer } from "node:buffer";
 import { ResponseToolkit } from "hapi";
 import type { ServerRoute, Request } from "@hapi/hapi";
 
-const getAlbumsRouter: ServerRoute = {
+export const getAlbumsRouter: ServerRoute = {
   path: "/albums/{id}",
   method: "GET",
   handler: async (req: Request, h: ResponseToolkit) => {
@@ -39,11 +39,10 @@ const getAlbumsRouter: ServerRoute = {
   },
 };
 
-const createAlbumRouter: ServerRoute = {
+export const createAlbumRouter: ServerRoute = {
   path: "/albums",
   method: "POST",
   handler: async (req: Request, h: ResponseToolkit) => {
-
     if ("invalidResponse" in req.app) return req.app.invalidResponse;
 
     const { name, year } = req.payload as AlbumsCreation;
@@ -79,7 +78,7 @@ const createAlbumRouter: ServerRoute = {
   },
 };
 
-const updateAlbumsRouter: ServerRoute = {
+export const updateAlbumsRouter: ServerRoute = {
   path: "/albums/{id}",
   method: "PUT",
   handler: async (req: Request, h: ResponseToolkit) => {
@@ -117,7 +116,7 @@ const updateAlbumsRouter: ServerRoute = {
   },
 };
 
-const deleteAlbumsRouter: ServerRoute = {
+export const deleteAlbumsRouter: ServerRoute = {
   path: "/albums/{id}",
   method: "DELETE",
   handler: async (req: Request, h: ResponseToolkit) => {
@@ -148,12 +147,3 @@ const deleteAlbumsRouter: ServerRoute = {
     return res;
   },
 };
-
-const AlbumsRouter = {
-  get: getAlbumsRouter,
-  create: createAlbumRouter,
-  update: updateAlbumsRouter,
-  delete: deleteAlbumsRouter,
-};
-
-export default AlbumsRouter;

@@ -6,7 +6,7 @@
   "ignore": [
     "src/**/*.spec.ts"
   ],
-  "exec": "ts-node -r tsconfig-paths/register ./src/app.ts",
+  "exec": "npx ts-node -r tsconfig-paths/register ./src/app.ts",
   "exclude": [
     "node_modules"
   ]
