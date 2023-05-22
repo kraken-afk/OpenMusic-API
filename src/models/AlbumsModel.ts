@@ -15,7 +15,7 @@ export default abstract class AlbumsModel {
     data: AlbumsCreation
   ): Promise<DatabaseResponse<DataAlbumCreated>> {
     const prisma = new PrismaClient(PrismaScheme);
-    const id = shortid.generate();
+    const id = 'album-' + shortid.generate();
 
     try {
       await prisma.albums.create({ data: { ...data, id } });

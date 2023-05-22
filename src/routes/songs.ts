@@ -65,8 +65,8 @@ export const getAllSongsRouter: ServerRoute = {
 };
 
 export const getSongRouter: ServerRoute = {
-  path: '/songs/{id}',
-  method: 'GET',
+  path: "/songs/{id}",
+  method: "GET",
   handler: async (req: Request, h: ResponseToolkit) => {
     const { id } = req.params;
     const song = await SongsModel.get(id);
@@ -87,7 +87,7 @@ export const getSongRouter: ServerRoute = {
         },
       };
       // formalitas
-      song.albumId = song.albumId ? 'album-' + song.albumId : song.albumId;
+      song.albumId = song.albumId ? "album-" + song.albumId : song.albumId;
     }
 
     const res = h.response(response).code(response.code);
@@ -98,5 +98,75 @@ export const getSongRouter: ServerRoute = {
     );
 
     return res;
+  },
+};
+
+export const updateSongRouter: ServerRoute = {
+  path: "/songs/{id}",
+  method: "PUT",
+  handler: async (req: Request, h: ResponseToolkit) => {
+    if ("invalidResponse" in req.app) return req.app.invalidResponse;
+
+    const song = req.payload as SongsCreation;
+    const { id } = req.params;
+    const dbResponse = await SongsModel.update(song, id);
+    let response: SongsResponse;
+
+    if (!dbResponse.status)
+      response = {
+        status: "fail",
+        code: 404,
+        message: "Song not found",
+      };
+    else {
+      response = {
+        status: "success",
+        code: 200,
+        message: dbResponse.data.message,
+      };
+    }
+    const res = h.response(response).code(response.code);
+    res.header("Content-Type", "application/json");
+    res.header(
+      "Content-Length",
+      String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+    );
+
+    return res;
+  },
+  options: {
+    pre: [{ method: validateSongsCreation }],
+  },
+};
+
+export const deleteSongRouter: ServerRoute = {
+  path: "/songs/{id}",
+  method: "DELETE",
+  handler: async (req: Request, h: ResponseToolkit) => {
+    const { id } = req.params;
+    const dbResponse = await SongsModel.remove(id);
+    let response: SongsResponse;
+
+    if (!dbResponse.status)
+      response = {
+        status: "fail",
+        code: 404,
+        message: "Song not found",
+      };
+    else {
+      response = {
+        status: "success",
+        code: 200,
+        message: dbResponse.data.message,
+      };
+    }
+    const res = h.response(response).code(response.code);
+    res.header("Content-Type", "application/json");
+    res.header(
+      "Content-Length",
+      String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+    );
+
+    return res;
   }
-}
+};

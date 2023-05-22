@@ -15,7 +15,7 @@ export default abstract class SongsModel {
     song: SongsCreation
   ): Promise<DatabaseResponse<{ songId: string }>> {
     const prisma = new PrismaClient(PrismaScheme);
-    const id = shortid();
+    const id = 'song-' + shortid();
 
     try {
       await prisma.songs.create({
@@ -54,7 +54,7 @@ export default abstract class SongsModel {
 
   static async get(id: string): Promise<Song | null> {
     const prisma = new PrismaClient(PrismaScheme);
-    const song = await prisma.songs.findUnique({ where: { id }}) as Song;
+    const song = (await prisma.songs.findUnique({ where: { id } })) as Song;
 
     prisma.$disconnect();
     return song;
@@ -66,11 +66,69 @@ export default abstract class SongsModel {
       select: {
         id: true,
         title: true,
-        performer: true
-      }
+        performer: true,
+      },
     });
 
     prisma.$disconnect();
     return songs;
+  }
+
+  static async update(
+    song: SongsCreation,
+    id: string
+  ): Promise<DatabaseResponse<{ message: string }>> {
+    const prisma = new PrismaClient(PrismaScheme);
+
+    try {
+      await prisma.songs.update({
+        data: { ...song },
+        where: { id },
+      });
+
+      const response: DatabaseResponsePositive<{ message: string }> = {
+        status: true,
+        data: {
+          message: `Song with id: ${id} updated`,
+        },
+      };
+      return response;
+    } catch (error) {
+      console.error(error);
+      const response: DatabaseResponseNegative = {
+        status: false,
+        message: error.message,
+      };
+      return response;
+    } finally {
+      prisma.$disconnect();
+    }
+  }
+
+  static async remove(id: string): Promise<DatabaseResponse<{ message: string }>> {
+    const prisma = new PrismaClient(PrismaScheme);
+
+    try {
+      await prisma.songs.delete({
+        where: { id },
+      });
+
+      const response: DatabaseResponsePositive<{ message: string }> = {
+        status: true,
+        data: {
+          message: `Song with id: ${id} removed`,
+        },
+      };
+      return response;
+    } catch (error) {
+      console.error(error);
+      const response: DatabaseResponseNegative = {
+        status: false,
+        message: error.message,
+      };
+      return response;
+    } finally {
+      prisma.$disconnect();
+    }
   }
 }
