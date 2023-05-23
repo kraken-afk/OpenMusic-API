@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "start": "ts-node ./src/app.ts"
+    "start": "node dist/app.js",
+    "build": "ts-node src/scripts/build.ts",
+    "build-start": "ts-node src/scripts/build.ts && echo \"TypeScript Compiled\nStarting the Server\n\" && node dist/app.js"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +24,7 @@
     "@hapi/hapi": "^21.3.2",
     "@prisma/client": "^4.14.0",
     "dotenv": "^16.0.3",
+    "joi": "^17.9.2",
     "shortid": "^2.2.16"
   }
 }

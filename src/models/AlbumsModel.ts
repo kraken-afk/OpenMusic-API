@@ -1,4 +1,3 @@
-import { PrismaClient } from "@prisma/client";
 import {
   Album,
   AlbumsCreation,
@@ -7,14 +6,13 @@ import {
   DatabaseResponseNegative,
   DatabaseResponsePositive,
 } from "../app.d";
-import PrismaScheme from "../config/PrismaScheme";
 import shortid from "shortid";
+import { prisma } from "../config/init";
 
 export default abstract class AlbumsModel {
   static async create(
     data: AlbumsCreation
   ): Promise<DatabaseResponse<DataAlbumCreated>> {
-    const prisma = new PrismaClient(PrismaScheme);
     const id = 'album-' + shortid.generate();
 
     try {
@@ -36,17 +34,13 @@ export default abstract class AlbumsModel {
       };
 
       return response;
-    } finally {
-      await prisma.$disconnect();
     }
   }
 
   static async get(id: string): Promise<Album | null> {
-    const prisma = new PrismaClient(PrismaScheme);
     const album: Album | null = await prisma.albums.findUnique({
       where: { id },
     });
-    await prisma.$disconnect();
     return album;
   }
 
@@ -54,7 +48,6 @@ export default abstract class AlbumsModel {
     id: string,
     { name, year }: AlbumsCreation
   ): Promise<DatabaseResponse<{ message: string }>> {
-    const prisma = new PrismaClient(PrismaScheme);
     try {
       await prisma.albums.update({
         where: { id },
@@ -71,15 +64,12 @@ export default abstract class AlbumsModel {
         message: error?.message ?? "Album not found",
       };
       return response;
-    } finally {
-      await prisma.$disconnect();
     }
   }
 
   static async remove(
     id: string
   ): Promise<DatabaseResponse<{ message: string }>> {
-    const prisma = new PrismaClient(PrismaScheme);
     try {
       await prisma.albums.delete({ where: { id } });
       const response: DatabaseResponsePositive<{ message: string }> = {
@@ -93,8 +83,6 @@ export default abstract class AlbumsModel {
         message: error?.message ?? "Album not found",
       };
       return response;
-    } finally {
-      await prisma.$disconnect();
     }
   }
 }

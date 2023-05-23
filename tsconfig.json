@@ -6,14 +6,8 @@
     "noEmit": true,
     "baseUrl": ".",
     "rootDir": "src",
-    "paths": {
-      "@config/*": ["src/config/*"],
-      "@routes/*": ["src/routes/*"],
-      "@validators/*": ["src/validators/*"],
-      "@errors/*": ["src/errors/*"]
-    },
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
   },
   "exclude": [
     "node_modules"

@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import {
   DatabaseResponse,
   DatabaseResponseNegative,
@@ -6,14 +6,13 @@ import {
   Song,
   SongsCreation,
 } from "../app.d";
-import PrismaScheme from "../config/PrismaScheme";
 import shortid from "shortid";
+import { prisma } from "../config/init";
 
 export default abstract class SongsModel {
   static async create(
     song: SongsCreation
   ): Promise<DatabaseResponse<{ songId: string }>> {
-    const prisma = new PrismaClient(PrismaScheme);
     const id = 'song-' + shortid();
 
     try {
@@ -46,24 +45,16 @@ export default abstract class SongsModel {
         message: error.message,
       };
       return response;
-    } finally {
-      await prisma.$disconnect();
     }
   }
 
   static async get(id: string): Promise<Song | null> {
-    const prisma = new PrismaClient(PrismaScheme);
     const song = (await prisma.songs.findUnique({ where: { id } })) as Song;
-
-    prisma.$disconnect();
     return song;
   }
 
   static async getAll(options: { select?: Prisma.songsSelect, where?: Prisma.songsWhereInput }): Promise<Song[]> {
-    const prisma = new PrismaClient(PrismaScheme);
     const songs = await prisma.songs.findMany(options);
-
-    await prisma.$disconnect();
     return songs;
   }
 
@@ -71,7 +62,6 @@ export default abstract class SongsModel {
     song: SongsCreation,
     id: string
   ): Promise<DatabaseResponse<{ message: string }>> {
-    const prisma = new PrismaClient(PrismaScheme);
 
     try {
       await prisma.songs.update({
@@ -92,13 +82,10 @@ export default abstract class SongsModel {
         message: error.message,
       };
       return response;
-    } finally {
-      await prisma.$disconnect();
     }
   }
 
   static async remove(id: string): Promise<DatabaseResponse<{ message: string }>> {
-    const prisma = new PrismaClient(PrismaScheme);
 
     try {
       await prisma.songs.delete({
@@ -118,8 +105,6 @@ export default abstract class SongsModel {
         message: error.message,
       };
       return response;
-    } finally {
-      await prisma.$disconnect();
     }
   }
 }
