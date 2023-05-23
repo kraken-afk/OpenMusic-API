@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:secret@localhost:5432/openmusic?schema=public"
+  url      = env("PGURL")
 }
 
 model albums {
