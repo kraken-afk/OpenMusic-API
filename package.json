@@ -8,7 +8,7 @@
     "dev": "nodemon",
     "start": "node dist/app.js",
     "build": "ts-node src/scripts/build.ts",
-    "build-start": "ts-node src/scripts/build.ts && echo Starting the Server &&  node dist/app.js"
+    "build-start": "ts-node -r dotenv-expand/config src/scripts/build.ts && echo Starting the Server &&  node -r dotenv-expand/config dist/app.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,7 @@
     "@hapi/hapi": "^21.3.2",
     "@prisma/client": "^4.14.0",
     "dotenv": "^16.0.3",
+    "dotenv-expand": "^10.0.0",
     "joi": "^17.9.2",
     "shortid": "^2.2.16"
   }

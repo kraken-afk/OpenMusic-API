@@ -1,5 +1,11 @@
 import { exec, type ExecException } from "node:child_process";
 
+(require("dotenv")).config();
+
+
+const { CONCATINATED_DATABASE_URL } = process.env;
+console.log(CONCATINATED_DATABASE_URL)
+
 prismaGenerateScheme();
 
 function prismaGenerateScheme(): void {
@@ -15,7 +21,7 @@ function prismaGenerateScheme(): void {
         console.error(`Command execution failed with error: ${stderr}`);
         process.exit(1);
       }
-      console.info(`${stdout}\n`);
+      console.info(`${stdout}`);
       console.info("Compiling TypeScript...");
       exec(
         "npx tsc src/app.ts --outDir ./dist --esModuleInterop",

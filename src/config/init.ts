@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
+import PrismaClientScheme from "./PrimaCLientScheme";
 
-export const prisma = new PrismaClient();
+export const prisma = new PrismaClient(PrismaClientScheme);
 
 process.on('exit', async () => {
   console.info('Server shutdown');
