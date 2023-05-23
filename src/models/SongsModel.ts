@@ -39,7 +39,6 @@ export default abstract class SongsModel {
       };
       return response;
     } catch (error) {
-      console.error(error);
       const response: DatabaseResponseNegative = {
         status: false,
         message: error.message,

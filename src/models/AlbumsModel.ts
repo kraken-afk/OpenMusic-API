@@ -26,7 +26,6 @@ export default abstract class AlbumsModel {
 
       return response;
     } catch (error) {
-      console.error(error);
       const response: DatabaseResponseNegative = {
         status: false,
         message:

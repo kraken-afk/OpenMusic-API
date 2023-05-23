@@ -17,8 +17,8 @@ export const createSongRouter: ServerRoute = {
     if (!dbResponse.status)
       response = {
         status: "fail",
-        code: 500,
-        message: "Internal server error",
+        code: 400,
+        message: `Invalid albumId: ${song.albumId} doesn't exist in albums - or Internal Server Error`,
       };
     else
       response = {

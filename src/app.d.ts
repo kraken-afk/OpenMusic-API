@@ -52,7 +52,7 @@ export type SongsResponse = {
 //             Models Scope              //
 //////////////////////////////////////////
 
-export type DatabaseResponsePositive<T extends Object> = { status: true, data: T };
+export type DatabaseResponsePositive<T extends Object> = { status: true, data: T , message?: string};
 
 export type DatabaseResponseNegative = { status: false, message: string };
 
