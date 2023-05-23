@@ -6,7 +6,7 @@
   "ignore": [
     "src/**/*.spec.ts"
   ],
-  "exec": "npx ts-node ./src/app.ts",
+  "exec": "npx ts-node -r dotenv-expand/config ./src/app.ts",
   "exclude": [
     "node_modules"
   ]
