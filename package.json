@@ -6,23 +6,21 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "start": "ts-node -r tsconfig-paths/register --esm ./src/app.ts"
+    "start": "ts-node ./src/app.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/hapi": "^18.0.8",
     "@types/node": "^20.1.4",
+    "@types/shortid": "^0.0.29",
     "prisma": "^4.14.0",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
     "@prisma/client": "^4.14.0",
-    "@types/shortid": "^0.0.29",
     "dotenv": "^16.0.3",
     "shortid": "^2.2.16"
   }

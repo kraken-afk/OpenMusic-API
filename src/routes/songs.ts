@@ -47,13 +47,28 @@ export const getAllSongsRouter: ServerRoute = {
   path: "/songs",
   method: "GET",
   handler: async (req: Request, h: ResponseToolkit) => {
+    const { performer, title } = req.query as {
+      performer: string;
+      title: string;
+    };
     const songs = await SongsModel.getAll({
       select: {
         id: true,
         title: true,
         performer: true,
-      }
+      },
+      where: {
+        title: {
+          contains: title,
+          mode: "insensitive",
+        },
+        performer: {
+          contains: performer,
+          mode: "insensitive",
+        },
+      },
     });
+
     let response: SongsResponse = {
       status: "success",
       code: 200,
@@ -84,7 +99,7 @@ export const getSongRouter: ServerRoute = {
         code: 404,
         message: "Song not found",
       };
-    else {
+    else
       response = {
         status: "success",
         code: 200,
@@ -92,9 +107,6 @@ export const getSongRouter: ServerRoute = {
           song,
         },
       };
-      // formalitas
-      song.albumId = song.albumId ? "album-" + song.albumId : song.albumId;
-    }
 
     const res = h.response(response).code(response.code);
     res.header("Content-Type", "application/json");
@@ -153,8 +165,6 @@ export const deleteSongRouter: ServerRoute = {
     const dbResponse = await SongsModel.remove(id);
     let response: SongsResponse;
 
-    console.log(dbResponse.status);
-
     if (!dbResponse.status)
       response = {
         status: "fail",
@@ -168,7 +178,6 @@ export const deleteSongRouter: ServerRoute = {
         message: dbResponse.data.message,
       };
     }
-    console.log(response);
     const res = h.response(response).code(response.code);
     res.header("Content-Type", "application/json");
     res.header(
@@ -177,5 +186,5 @@ export const deleteSongRouter: ServerRoute = {
     );
 
     return res;
-  }
+  },
 };

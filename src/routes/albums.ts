@@ -2,8 +2,7 @@ import AlbumsModel from "../models/AlbumsModel";
 import validateAlbumCreation from "../validators/albumsValidator";
 import { AlbumsCreation, AlbumsResponse } from "../app.d";
 import { Buffer } from "node:buffer";
-import { ResponseToolkit } from "hapi";
-import type { ServerRoute, Request } from "@hapi/hapi";
+import type { ServerRoute, Request, ResponseToolkit } from "@hapi/hapi";
 import SongsModel from "../models/SongsModel";
 
 export const getAlbumsRouter: ServerRoute = {
