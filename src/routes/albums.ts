@@ -4,6 +4,7 @@ import { AlbumsCreation, AlbumsResponse } from "../app.d";
 import { Buffer } from "node:buffer";
 import { ResponseToolkit } from "hapi";
 import type { ServerRoute, Request } from "@hapi/hapi";
+import SongsModel from "../models/SongsModel";
 
 export const getAlbumsRouter: ServerRoute = {
   path: "/albums/{id}",
@@ -19,7 +20,11 @@ export const getAlbumsRouter: ServerRoute = {
         code: 404,
         message: "Album not found",
       };
-    else
+    else {
+      album.songs = await SongsModel.getAll({
+        select: { id: true, title: true, performer: true },
+        where: { albumId: album.id  }
+      });
       response = {
         status: "success",
         code: 200,
@@ -27,6 +32,7 @@ export const getAlbumsRouter: ServerRoute = {
           album,
         },
       };
+    }
 
     const res = h.response(response).code(response.code);
     res.header("Content-Type", "application/json");

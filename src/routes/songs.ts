@@ -1,5 +1,5 @@
-import { Request, ResponseToolkit, Server, ServerRoute } from "@hapi/hapi";
-import { SongsCreation, SongsResponse, Songs, Song } from "../app.d";
+import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
+import { SongsCreation, SongsResponse } from "../app.d";
 import SongsModel from "../models/SongsModel";
 import validateSongsCreation from "../validators/songsValidator";
 
@@ -47,7 +47,13 @@ export const getAllSongsRouter: ServerRoute = {
   path: "/songs",
   method: "GET",
   handler: async (req: Request, h: ResponseToolkit) => {
-    const songs = await SongsModel.getAll();
+    const songs = await SongsModel.getAll({
+      select: {
+        id: true,
+        title: true,
+        performer: true,
+      }
+    });
     let response: SongsResponse = {
       status: "success",
       code: 200,
@@ -147,6 +153,8 @@ export const deleteSongRouter: ServerRoute = {
     const dbResponse = await SongsModel.remove(id);
     let response: SongsResponse;
 
+    console.log(dbResponse.status);
+
     if (!dbResponse.status)
       response = {
         status: "fail",
@@ -160,6 +168,7 @@ export const deleteSongRouter: ServerRoute = {
         message: dbResponse.data.message,
       };
     }
+    console.log(response);
     const res = h.response(response).code(response.code);
     res.header("Content-Type", "application/json");
     res.header(

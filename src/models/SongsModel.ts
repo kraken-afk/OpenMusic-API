@@ -1,10 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import {
   DatabaseResponse,
   DatabaseResponseNegative,
   DatabaseResponsePositive,
   Song,
-  Songs,
   SongsCreation,
 } from "../app.d";
 import PrismaScheme from "../config/PrismaScheme";
@@ -48,7 +47,7 @@ export default abstract class SongsModel {
       };
       return response;
     } finally {
-      prisma.$disconnect();
+      await prisma.$disconnect();
     }
   }
 
@@ -60,17 +59,11 @@ export default abstract class SongsModel {
     return song;
   }
 
-  static async getAll(): Promise<Songs[]> {
+  static async getAll(options: { select?: Prisma.songsSelect, where?: Prisma.songsWhereInput }): Promise<Song[]> {
     const prisma = new PrismaClient(PrismaScheme);
-    const songs = await prisma.songs.findMany({
-      select: {
-        id: true,
-        title: true,
-        performer: true,
-      },
-    });
+    const songs = await prisma.songs.findMany(options);
 
-    prisma.$disconnect();
+    await prisma.$disconnect();
     return songs;
   }
 
@@ -94,14 +87,13 @@ export default abstract class SongsModel {
       };
       return response;
     } catch (error) {
-      console.error(error);
       const response: DatabaseResponseNegative = {
         status: false,
         message: error.message,
       };
       return response;
     } finally {
-      prisma.$disconnect();
+      await prisma.$disconnect();
     }
   }
 
@@ -121,14 +113,13 @@ export default abstract class SongsModel {
       };
       return response;
     } catch (error) {
-      console.error(error);
       const response: DatabaseResponseNegative = {
         status: false,
         message: error.message,
       };
       return response;
     } finally {
-      prisma.$disconnect();
+      await prisma.$disconnect();
     }
   }
 }

@@ -37,7 +37,7 @@ export default abstract class AlbumsModel {
 
       return response;
     } finally {
-      prisma.$disconnect();
+      await prisma.$disconnect();
     }
   }
 
@@ -46,7 +46,7 @@ export default abstract class AlbumsModel {
     const album: Album | null = await prisma.albums.findUnique({
       where: { id },
     });
-    prisma.$disconnect();
+    await prisma.$disconnect();
     return album;
   }
 
@@ -72,7 +72,7 @@ export default abstract class AlbumsModel {
       };
       return response;
     } finally {
-      prisma.$disconnect();
+      await prisma.$disconnect();
     }
   }
 
@@ -94,7 +94,7 @@ export default abstract class AlbumsModel {
       };
       return response;
     } finally {
-      prisma.$disconnect();
+      await prisma.$disconnect();
     }
   }
 }

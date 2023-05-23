@@ -14,7 +14,7 @@ export type AlbumsCreation = {
   year: number,
 };
 
-export type Album = AlbumsCreation & { id: string }
+export type Album = AlbumsCreation & { id: string, songs?: Song[] }
 
 export type DataAlbumCreated = { albumId: string };
 
@@ -31,26 +31,20 @@ export type SongsCreation = {
   albumId?: string,
 }
 
-export type Songs = {
-  id: string,
-  title: string,
-  performer: string,
-};
-
 export type Song = {
-  id: string;
-  title: string;
-  year: number;
-  performer: string;
-  genre: string;
-  duration?: number;
-  albumId?: string;
+  id?: string;
+  title?: string;
+  year?: number;
+  performer?: string;
+  genre?: string;
+  duration?: number | null;
+  albumId?: string | null;
 };
 
 export type SongsResponse = {
   status: "success" | "fail";
   code: number;
-  data?: { songId: string } | { songs: Songs[] } | { song: Song };
+  data?: { songId: string } | { songs: Song[] } | { song: Song };
   message?: string;
 };
 
