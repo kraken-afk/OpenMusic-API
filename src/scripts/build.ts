@@ -1,20 +1,18 @@
 import { exec, type ExecException } from "node:child_process";
+import { Client } from "pg";
 
-(require("dotenv")).config();
+require("dotenv").config();
 
+const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env;
 
-const { CONCATINATED_DATABASE_URL } = process.env;
-console.log(CONCATINATED_DATABASE_URL)
-
-prismaGenerateScheme();
-
-function prismaGenerateScheme(): void {
-  console.info("Creating Database...");
+(async () => {
+  await createDatabaseIfNotExists();
+  console.log("Compiling TypeScript...");
   exec(
-    "npx prisma migrate dev --name openmusic",
+    "npx tsc src/app.ts --outDir ./dist --esModuleInterop --target es6 --moduleResolution node --module nodenext",
     (error: ExecException | null, stdout: string, stderr: string) => {
       if (error) {
-        console.error(`Error: ${error.message}`);
+        console.error(`Error: `, error);
         process.exit(1);
       }
       if (stderr) {
@@ -22,23 +20,44 @@ function prismaGenerateScheme(): void {
         process.exit(1);
       }
       console.info(`${stdout}`);
-      console.info("Compiling TypeScript...");
-      exec(
-        "npx tsc src/app.ts --outDir ./dist --esModuleInterop",
-        (error: ExecException | null, stdout: string, stderr: string) => {
-          if (error) {
-            console.error(`Error: ${error.message}`);
-            process.exit(1);
-          }
-          if (stderr) {
-            console.error(`Command execution failed with error: ${stderr}`);
-            process.exit(1);
-          }
-          console.info(`${stdout}`);
-          console.info("TypeScript Compiled");
-          process.exit(0);
-        }
-      );
+      console.info("TypeScript Compiled");
+      process.exit(0);
     }
   );
+})();
+
+async function createDatabaseIfNotExists(): Promise<void> {
+  const client = new Client({
+    user: PGUSER,
+    password: PGPASSWORD,
+    host: PGHOST,
+    port: PGPORT ? parseInt(PGPORT) : undefined,
+    database: "postgres", // Connect to the default 'postgres' database
+  });
+
+  try {
+    await client.connect();
+
+    // Check if the specified database already exists
+    console.log(`Checking database with name '${PGDATABASE}'...`);
+    const result = await client.query(
+      `
+      SELECT datname FROM pg_database WHERE datname = $1;
+    `,
+      [PGDATABASE]
+    );
+
+    if (result.rows.length === 0) {
+      // Create the database if it doesn't exist
+      console.log(
+        `Database doesn't exist, creating database with name ${PGDATABASE}...`
+      );
+      await client.query(`CREATE DATABASE ${PGDATABASE};`);
+      console.log(`Database '${PGDATABASE}' created successfully.`);
+    } else console.log(`Database '${PGDATABASE}' already exists.`);
+  } catch (error) {
+    console.error("Error creating database:", error);
+  } finally {
+    await client.end();
+  }
 }

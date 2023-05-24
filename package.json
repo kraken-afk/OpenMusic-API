@@ -6,26 +6,26 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "start": "node -r dotenv-expand/config dist/app.js",
-    "build": "ts-node -r dotenv-expand/config src/scripts/build.ts",
-    "build-start": "ts-node -r dotenv-expand/config src/scripts/build.ts && echo Starting the Server &&  node -r dotenv-expand/config dist/app.js"
+    "start": "node dist/app.js",
+    "build": "ts-node src/scripts/build.ts",
+    "build-start": "ts-node src/scripts/build.ts && echo Starting the Server &&  node dist/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.1.4",
+    "@types/sequelize": "^4.28.15",
     "@types/shortid": "^0.0.29",
-    "prisma": "^4.14.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
-    "@prisma/client": "^4.14.0",
     "dotenv": "^16.0.3",
-    "dotenv-expand": "^10.0.0",
     "joi": "^17.9.2",
+    "pg": "^8.11.0",
+    "sequelize": "^6.31.1",
     "shortid": "^2.2.16"
   }
 }

@@ -2,6 +2,7 @@ import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
 import { SongsCreation, SongsResponse } from "../app.d";
 import SongsModel from "../models/SongsModel";
 import validateSongsCreation from "../validators/songsValidator";
+import { Op } from "sequelize";
 
 export const createSongRouter: ServerRoute = {
   path: "/songs",
@@ -52,20 +53,20 @@ export const getAllSongsRouter: ServerRoute = {
       title: string;
     };
     const songs = await SongsModel.getAll({
-      select: {
-        id: true,
-        title: true,
-        performer: true,
-      },
+      attributes: ["id", "title", "performer"],
       where: {
-        title: {
-          contains: title,
-          mode: "insensitive",
-        },
-        performer: {
-          contains: performer,
-          mode: "insensitive",
-        },
+        [Op.and]: [
+          {
+            title: {
+              [Op.iRegexp]: `^.*${title || ""}.*$`,
+            },
+          },
+          {
+            performer: {
+              [Op.iRegexp]: `^.*${performer || ""}.*$`,
+            },
+          },
+        ],
       },
     });
 

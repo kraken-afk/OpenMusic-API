@@ -1,13 +1,14 @@
-import { Prisma } from "@prisma/client";
 import {
   DatabaseResponse,
   DatabaseResponseNegative,
   DatabaseResponsePositive,
-  Song,
   SongsCreation,
 } from "../app.d";
 import shortid from "shortid";
-import { prisma } from "../config/init";
+import { Songs, SongsScheme } from "../config/init";
+import { FindOptions } from "sequelize";
+import NotFoundError from "../errors/NotFoundError";
+
 
 export default abstract class SongsModel {
   static async create(
@@ -16,19 +17,14 @@ export default abstract class SongsModel {
     const id = 'song-' + shortid();
 
     try {
-      await prisma.songs.create({
-        data: {
+      await Songs.create({
           id,
           title: song.title,
           genre: song.genre,
           performer: song.performer,
-          year: song.year,
-          duration: (song?.duration ? song.duration : null) as number,
-          albumId: (song?.albumId ? song.albumId : null) as string,
-        },
-        include: {
-          albums: true,
-        },
+          year: +song.year,
+          duration: (song?.duration ? +song.duration : null),
+          albumId: (song?.albumId ? song.albumId : null),
       });
 
       const response: DatabaseResponsePositive<{ songId: string }> = {
@@ -47,13 +43,13 @@ export default abstract class SongsModel {
     }
   }
 
-  static async get(id: string): Promise<Song | null> {
-    const song = (await prisma.songs.findUnique({ where: { id } })) as Song;
+  static async get(id: string): Promise<SongsScheme | null> {
+    const song = (await Songs.findByPk(id, { raw: true })) as SongsScheme | null;
     return song;
   }
 
-  static async getAll(options: { select?: Prisma.songsSelect, where?: Prisma.songsWhereInput }): Promise<Song[]> {
-    const songs = await prisma.songs.findMany(options);
+  static async getAll(options: FindOptions): Promise<SongsScheme[]> {
+    const songs = await Songs.findAll({ ...options , raw: true } as FindOptions );
     return songs;
   }
 
@@ -63,10 +59,10 @@ export default abstract class SongsModel {
   ): Promise<DatabaseResponse<{ message: string }>> {
 
     try {
-      await prisma.songs.update({
-        data: { ...song },
-        where: { id },
-      });
+      const [ affectedRow ] = await Songs.update(song, { where: { id } });
+
+      if (affectedRow === 0)
+        throw new NotFoundError(`Song with id: ${id} doesn't exist`, 404);
 
       const response: DatabaseResponsePositive<{ message: string }> = {
         status: true,
@@ -79,6 +75,7 @@ export default abstract class SongsModel {
       const response: DatabaseResponseNegative = {
         status: false,
         message: error.message,
+        code: error.code,
       };
       return response;
     }
@@ -87,9 +84,10 @@ export default abstract class SongsModel {
   static async remove(id: string): Promise<DatabaseResponse<{ message: string }>> {
 
     try {
-      await prisma.songs.delete({
-        where: { id },
-      });
+      const affectedRow = await Songs.destroy({ where: { id } });
+
+      if (affectedRow === 0)
+        throw new NotFoundError(`Song with id: ${id} doesn't exist`, 404);
 
       const response: DatabaseResponsePositive<{ message: string }> = {
         status: true,
@@ -102,6 +100,7 @@ export default abstract class SongsModel {
       const response: DatabaseResponseNegative = {
         status: false,
         message: error.message,
+        code: error.code
       };
       return response;
     }

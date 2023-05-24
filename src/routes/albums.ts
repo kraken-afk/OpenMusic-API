@@ -21,7 +21,7 @@ export const getAlbumsRouter: ServerRoute = {
       };
     else {
       album.songs = await SongsModel.getAll({
-        select: { id: true, title: true, performer: true },
+        attributes: ["id", "title", "performer"],
         where: { albumId: album.id  }
       });
       response = {
@@ -58,7 +58,7 @@ export const createAlbumRouter: ServerRoute = {
       response = {
         status: "fail",
         code: 500,
-        message: "Internal server error",
+        message: dbResponse.message,
       };
     else
       response = {
