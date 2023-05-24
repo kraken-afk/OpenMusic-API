@@ -3,6 +3,8 @@ Assignment for Dicoding back-end fundamental class.
 
 ## Built with
 - TypeScript
+- ~~Express~~
 - Hapi Framework
-- Prisma
+- ~~Prisma~~
+- Sequelize
 - NodeJs
