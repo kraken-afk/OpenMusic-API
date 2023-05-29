@@ -1,31 +1,30 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
 import { SongsCreation, SongsResponse } from "../app.d";
+import Joi from "joi";
 
 export default function validateSongsCreation(
   req: Request,
   h: ResponseToolkit
 ) {
   const song = req.payload as SongsCreation;
-  const requiredParameter = {
-    title: "string",
-    year: "number",
-    genre: "string",
-    performer: "string",
-  };
+  const songScheme = Joi.object({
+    title: Joi.string().max(255).required(),
+    year: Joi.number().integer().required(),
+    genre: Joi.string().max(255).required(),
+    performer: Joi.string().max(255).required(),
+    duration: Joi.number().optional(),
+    albumId: Joi.string().max(255).optional()
+  });
+  const { error } = songScheme.validate(song, { abortEarly: false });
 
-  if (
-    Object.entries(requiredParameter).every(([param, type]) => {
-      return (param in song && typeof song[param] === type);
-    })
-  )
+  if (!error)
     return h.continue;
   else {
     const { stringify: s } = JSON;
     const response: SongsResponse = {
       status: "fail",
       code: 400,
-      message:
-        "Invalid request body.",
+      message: error.details.map(({ message }) => message).join(", "),
     };
 
     const res = h.response(response).code(response.code);

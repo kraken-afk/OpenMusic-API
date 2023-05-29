@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
     "start": "node dist/app.js",
-    "build": "ts-node src/scripts/build.ts",
+    "build": "ts-node src/scripts/build.ts --no-types",
     "build-start": "ts-node src/scripts/build.ts && echo Starting the Server &&  node dist/app.js"
   },
   "keywords": [],

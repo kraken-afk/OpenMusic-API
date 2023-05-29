@@ -1,26 +1,28 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
 import type { AlbumsCreation, AlbumsResponse } from "../app.d";
+import Joi, { object } from "joi";
 
 export default function validateAlbumCreation(
   req: Request,
   h: ResponseToolkit
 ) {
   const payload = req.payload as AlbumsCreation;
+  const albumsSchema = Joi.object({
+    name: Joi.string().min(1).max(255).required(),
+    year: Joi.number().integer().required(),
+  });
+  const { error } = albumsSchema.validate(payload, {
+    abortEarly: false,
+  });
 
-  if (
-    "name" in payload &&
-    "year" in payload &&
-    typeof payload.name === "string" &&
-    typeof payload.year === "number"
-  )
+  if (!error)
     return h.continue;
   else {
     const { stringify: s } = JSON;
     const response: AlbumsResponse = {
       status: "fail",
       code: 400,
-      message:
-        "Invalid request body. Name<string> and Year<number> are required.",
+      message: error.details.map(({ message }) => message).join(", "),
     };
 
     const res = h.response(response).code(response.code);

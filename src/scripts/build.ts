@@ -1,5 +1,6 @@
 import { exec, type ExecException } from "node:child_process";
 import { Client } from "pg";
+import process from "node:process";
 
 require("dotenv").config();
 
@@ -7,6 +8,10 @@ const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env;
 
 (async () => {
   await createDatabaseIfNotExists();
+  // compileTypeScript();
+})();
+
+function compileTypeScript(): void {
   console.log("Compiling TypeScript...");
   exec(
     "npx tsc src/app.ts --outDir ./dist --esModuleInterop --target es6 --moduleResolution node --module nodenext",
@@ -24,7 +29,7 @@ const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env;
       process.exit(0);
     }
   );
-})();
+}
 
 async function createDatabaseIfNotExists(): Promise<void> {
   const client = new Client({
