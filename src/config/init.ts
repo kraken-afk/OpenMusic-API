@@ -1,6 +1,8 @@
 import { config } from "dotenv";
 import { Model, Sequelize } from "sequelize";
-import { AlbumsModel, SongsModel } from "./config";
+import { AlbumsModelAttributes } from "./scheme/AlbumsModelAttributes";
+import { SongsModelAttributes } from "./scheme/SongsModelAttributes";
+import { UsersModelAttributes } from "./scheme/UsersModelAttributes";
 
 config();
 
@@ -12,7 +14,7 @@ const sequelize = new Sequelize({
   host: PGHOST,
   port: PGPORT ? +PGPORT : 0,
   dialect: "postgres",
-  logging: false
+  logging: false,
 });
 
 export class AlbumsScheme extends Model {
@@ -31,15 +33,28 @@ export class SongsScheme extends Model {
   declare albumId?: string | null;
 }
 
-AlbumsScheme.init(AlbumsModel, {
+export class UsersScheme extends Model {
+  declare id: string;
+  declare username: string;
+  declare fullname: string;
+  declare password: string;
+}
+
+AlbumsScheme.init(AlbumsModelAttributes, {
   sequelize,
   modelName: "albums",
   timestamps: false,
 });
 
-SongsScheme.init(SongsModel, {
+SongsScheme.init(SongsModelAttributes, {
   sequelize,
   modelName: "songs",
+  timestamps: false,
+});
+
+UsersScheme.init(UsersModelAttributes, {
+  sequelize,
+  modelName: "users",
   timestamps: false,
 });
 
@@ -50,3 +65,4 @@ export async function databaseSync(): Promise<void> {
 
 export const Albums = AlbumsScheme;
 export const Songs = SongsScheme;
+export const Users = UsersScheme;
