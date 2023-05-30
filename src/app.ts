@@ -1,6 +1,6 @@
 import * as Hapi from "@hapi/hapi";
-import { router } from "./routes";
 import process from "node:process";
+import { router } from "./routes";
 import { databaseSync } from "./config/init";
 
 async function init() {

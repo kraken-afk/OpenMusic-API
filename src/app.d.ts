@@ -49,6 +49,23 @@ export type SongsResponse = {
 };
 
 ////////////////////////////////////////////
+//             Users Scope               //
+//////////////////////////////////////////
+
+export type UserCreation = {
+  username: string;
+  fullname: string;
+  password: string;
+}
+
+export type UserResponse = {
+  status: "success" | "fail";
+  code: number;
+  data?: { userId: string };
+  message?: string;
+};
+
+////////////////////////////////////////////
 //             Models Scope              //
 //////////////////////////////////////////
 
