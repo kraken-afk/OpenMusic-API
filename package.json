@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "dev": "nodemon",
     "start": "node dist/app.js",
     "build": "ts-node src/scripts/build.ts --no-types",
@@ -14,14 +14,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^29.5.1",
     "@types/node": "^20.1.4",
     "@types/sequelize": "^4.28.15",
     "@types/shortid": "^0.0.29",
+    "jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "@hapi/hapi": "^21.3.2",
+    "@hapi/jwt": "^3.2.0",
     "dotenv": "^16.0.3",
     "joi": "^17.9.2",
     "pg": "^8.11.0",
