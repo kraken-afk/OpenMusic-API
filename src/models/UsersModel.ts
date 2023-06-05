@@ -4,9 +4,11 @@ import {
   UserCreation,
   DatabaseResponsePositive,
   DatabaseResponseNegative,
+  UserAuth,
 } from "../app.d";
-import { Users } from "../config/init";
+import { Users, UsersScheme } from "../config/init";
 import { encrypt } from "../helpers";
+import { Op } from "sequelize";
 
 export default abstract class UsersModel {
   static async create({
@@ -36,7 +38,45 @@ export default abstract class UsersModel {
   }
 
   static async isAlreadyExist(username: string): Promise<boolean> {
-    const user = await Users.findOne({ where: { username } , raw: true })
-    return (user !== null);
+    const user = await Users.findOne({ where: { username }, raw: true });
+    return user !== null;
+  }
+
+  static async find({
+    username,
+    password,
+  }: UserAuth): Promise<DatabaseResponse<UsersScheme>> {
+    const usn = await Users.findOne({ where: { username }, raw: true });
+
+    if (!usn) {
+      const response: DatabaseResponseNegative = {
+        status: false,
+        code: 401,
+        message: "Couldn't find username: " + username,
+      };
+      return response;
+    }
+
+    const user = await Users.findOne({
+      where: { [Op.and]: { username, password: encrypt.generate(password) } },
+      raw: true,
+    });
+
+    if (!user) {
+      const response: DatabaseResponseNegative = {
+        status: false,
+        code: 401,
+        message: "Username and password doesn't match"
+      }
+      return response;
+    }
+
+    const response: DatabaseResponsePositive<any> = {
+      status: true,
+      code: 201,
+      data: { ...user },
+    };
+
+    return response;
   }
 }

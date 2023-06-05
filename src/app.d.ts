@@ -65,11 +65,31 @@ export type UserResponse = {
   message?: string;
 };
 
+export type UserAuth = {
+  username: string;
+  password: string;
+}
+
+////////////////////////////////////////////
+//           Authentication Scope        //
+//////////////////////////////////////////
+
+export type AuthenticationResponse = {
+  status: "success" | "fail",
+  code: number,
+  data?: { accessToken?: string, refreshToken?: string },
+  message?: string
+}
+
+export type RefreshTokenPayload = {
+  refreshToken: string | Buffer
+}
+
 ////////////////////////////////////////////
 //             Models Scope              //
 //////////////////////////////////////////
 
-export type DatabaseResponsePositive<T extends Object> = { status: true, data: T , message?: string};
+export type DatabaseResponsePositive<T extends Object> = { status: true, code?: number; data: T , message?: string};
 
 export type DatabaseResponseNegative = { status: false, message: string, code?: number };
 
