@@ -4,6 +4,7 @@ import { AlbumsModelAttributes } from "./scheme/AlbumsModelAttributes";
 import { SongsModelAttributes } from "./scheme/SongsModelAttributes";
 import { UsersModelAttributes } from "./scheme/UsersModelAttributes";
 import { AuthenticationModelAttributes } from "./scheme/AuthenticationModelAttributes";
+import { PlaylistsModelAttributes } from "./scheme/PlaylistsModelAttributes";
 
 config();
 
@@ -45,6 +46,13 @@ export class AuthenticationsScheme extends Model {
   declare token: string;
 }
 
+export class PlaylistsScheme extends Model {
+  declare id: string;
+  declare name: string;
+  declare owner: string;
+  declare songs: string[];
+}
+
 AlbumsScheme.init(AlbumsModelAttributes, {
   sequelize,
   modelName: "albums",
@@ -67,7 +75,13 @@ AuthenticationsScheme.init(AuthenticationModelAttributes, {
   sequelize,
   modelName: "authentications",
   timestamps: false,
-})
+});
+
+PlaylistsScheme.init(PlaylistsModelAttributes, {
+  sequelize,
+  modelName: "playlists",
+  timestamps: false,
+});
 
 export async function databaseSync(): Promise<void> {
   await sequelize.sync();
@@ -78,3 +92,4 @@ export const Albums = AlbumsScheme;
 export const Songs = SongsScheme;
 export const Users = UsersScheme;
 export const Auth = AuthenticationsScheme;
+export const Playlists = PlaylistsScheme;

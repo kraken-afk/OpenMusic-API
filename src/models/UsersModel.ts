@@ -9,6 +9,7 @@ import {
 import { Users, UsersScheme } from "../config/init";
 import { encrypt } from "../helpers";
 import { Op } from "sequelize";
+import NotFoundError from "../errors/NotFoundError";
 
 export default abstract class UsersModel {
   static async create({
@@ -78,5 +79,13 @@ export default abstract class UsersModel {
     };
 
     return response;
+  }
+
+  static async getUsername(id: string) {
+    const user = await Users.findByPk(id, { raw: true  });
+
+    if (!user)
+      throw new NotFoundError(`User with id: ${id} doesn't exist`);
+    return user.username;
   }
 }
