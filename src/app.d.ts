@@ -1,13 +1,13 @@
+export type ServerResponse<T extends Object> = {
+  status: "success" | "fail";
+  code: number;
+  data?: T;
+  message?: string;
+};
+
 ////////////////////////////////////////////
 //             Albums Scope              //
 //////////////////////////////////////////
-
-export type AlbumsResponse = {
-  status: "success" | "fail";
-  code: number;
-  data?: { albumId: string } | { album: Album };
-  message?: string;
-};
 
 export type AlbumsCreation = {
   name: string;
@@ -44,13 +44,6 @@ export type Song = {
   albumId?: string | null;
 };
 
-export type SongsResponse = {
-  status: "success" | "fail";
-  code: number;
-  data?: { songId: string } | { songs: any[] } | { song: any };
-  message?: string;
-};
-
 ////////////////////////////////////////////
 //             Users Scope               //
 //////////////////////////////////////////
@@ -59,13 +52,6 @@ export type UserCreation = {
   username: string;
   fullname: string;
   password: string;
-};
-
-export type UserResponse = {
-  status: "success" | "fail";
-  code: number;
-  data?: { userId: string };
-  message?: string;
 };
 
 export type UserAuth = {
@@ -77,13 +63,6 @@ export type UserAuth = {
 //           Authentication Scope        //
 //////////////////////////////////////////
 
-export type AuthenticationResponse = {
-  status: "success" | "fail";
-  code: number;
-  data?: { accessToken?: string; refreshToken?: string };
-  message?: string;
-};
-
 export type RefreshTokenPayload = {
   refreshToken: string | Buffer;
 };
@@ -92,7 +71,7 @@ export type RefreshTokenPayload = {
 //             Playlists Scope           //
 //////////////////////////////////////////
 
-export type PlaylistCreation = { name: string, owner: string };
+export type PlaylistCreation = { name: string; owner: string };
 
 export type Playlist = {
   id: string;
@@ -100,11 +79,13 @@ export type Playlist = {
   username: string;
 };
 
-export type PlaylistsResponse = {
-  status: "success" | "fail";
-  code: number;
-  data?: { playlists?: Playlist[]; playlistId?: string, playlist?: any };
-  message?: string;
+////////////////////////////////////////////
+//         Collaborations Scope          //
+//////////////////////////////////////////
+
+export type CollaborationCreationPayload = {
+  playlistId: string;
+  userId: string;
 };
 
 ////////////////////////////////////////////

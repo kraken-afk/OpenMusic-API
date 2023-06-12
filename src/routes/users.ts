@@ -1,7 +1,9 @@
 import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
-import { UserCreation, UserResponse } from "../app.d";
+import { UserCreation, ServerResponse } from "../app.d";
 import UsersModel from "../models/UsersModel";
 import { validateUserCreation } from "../validators/usersValidator";
+
+type UserResponse = ServerResponse<{ userId: string }>;
 
 export const createUserRouter: ServerRoute = {
   path: "/users",

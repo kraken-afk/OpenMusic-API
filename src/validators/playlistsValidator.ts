@@ -1,6 +1,12 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
 import Joi from "joi";
-import { PlaylistCreation, PlaylistsResponse } from "../app.d";
+import { PlaylistCreation, ServerResponse, Playlist } from "../app.d";
+
+type PlaylistsResponse = ServerResponse<{
+  playlists?: Playlist[];
+  playlistId?: string;
+  playlist?: any;
+}>;
 
 export default abstract class playlistValidator {
   static createValidator(req: Request, h: ResponseToolkit) {

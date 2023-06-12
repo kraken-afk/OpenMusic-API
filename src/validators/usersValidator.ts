@@ -1,7 +1,9 @@
 import Joi from "joi";
 import { type Request, type ResponseToolkit } from "@hapi/hapi";
-import { UserCreation, UserResponse } from "../app.d";
+import { UserCreation, ServerResponse } from "../app.d";
 import UsersModel from "../models/UsersModel";
+
+type UserResponse = ServerResponse<{ userId: string }>;
 
 export async function validateUserCreation(req: Request, h: ResponseToolkit) {
   const payload = req.payload as UserCreation;

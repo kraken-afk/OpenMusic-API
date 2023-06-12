@@ -3,9 +3,9 @@ import * as Jwt from "@hapi/jwt"
 import process from "node:process";
 import { router } from "./routes";
 import { databaseSync } from "./config/init";
+(require('dotenv')).config();
 
 async function init() {
-  (require('dotenv')).config();
   const host = process.env?.HOST ?? "127.0.0.1";
   const port = process.env?.PORT ? parseInt(process.env.PORT) : 5000;
   const server = Hapi.server({ host, port });

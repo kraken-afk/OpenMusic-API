@@ -1,6 +1,10 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
-import { SongsCreation, SongsResponse } from "../app.d";
+import { SongsCreation, ServerResponse } from "../app.d";
 import Joi from "joi";
+
+type SongsResponse = ServerResponse<
+  { songId: string } | { songs: any[] } | { song: any }
+>;
 
 export default function validateSongsCreation(
   req: Request,

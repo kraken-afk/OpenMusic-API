@@ -1,6 +1,8 @@
 import { Request, ResponseToolkit } from "@hapi/hapi";
-import type { AlbumsCreation, AlbumsResponse } from "../app.d";
+import type { AlbumsCreation, ServerResponse, Album } from "../app.d";
 import Joi from "joi";
+
+type AlbumsResponse = ServerResponse<{ albumId: string } | { album: Album }>;
 
 export default function validateAlbumCreation(
   req: Request,

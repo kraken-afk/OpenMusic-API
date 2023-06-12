@@ -1,9 +1,11 @@
 import AlbumsModel from "../models/AlbumsModel";
 import validateAlbumCreation from "../validators/albumsValidator";
-import { AlbumsCreation, AlbumsResponse } from "../app.d";
+import { AlbumsCreation, ServerResponse, Album } from "../app.d";
 import { Buffer } from "node:buffer";
 import type { ServerRoute, Request, ResponseToolkit } from "@hapi/hapi";
 import SongsModel from "../models/SongsModel";
+
+type AlbumsResponse = ServerResponse<{ albumId: string } | { album: Album }>;
 
 export const getAlbumsRouter: ServerRoute = {
   path: "/albums/{id}",

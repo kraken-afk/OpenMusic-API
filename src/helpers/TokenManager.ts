@@ -1,9 +1,6 @@
 import process from "node:process";
-import { config } from "dotenv";
 import { token, HapiJwt } from "@hapi/jwt";
 import InvariantError from "../errors/InvariantError";
-
-config();
 
 export default abstract class TokenManager {
   public static generateAccess(payload: HapiJwt.Payload): string {

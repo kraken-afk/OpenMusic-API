@@ -1,8 +1,12 @@
 import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
-import { SongsCreation, SongsResponse } from "../app.d";
+import { SongsCreation, ServerResponse } from "../app.d";
 import SongsModel from "../models/SongsModel";
 import validateSongsCreation from "../validators/songsValidator";
 import { Op } from "sequelize";
+
+type SongsResponse = ServerResponse<
+  { songId: string } | { songs: any[] } | { song: any }
+>;
 
 export const createSongRouter: ServerRoute = {
   path: "/songs",

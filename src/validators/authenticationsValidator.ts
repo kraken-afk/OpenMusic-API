@@ -1,6 +1,11 @@
 import Joi from "joi";
 import { Request, ResponseToolkit } from "@hapi/hapi";
-import { AuthenticationResponse, RefreshTokenPayload, UserAuth } from "../app.d";
+import { ServerResponse, RefreshTokenPayload, UserAuth } from "../app.d";
+
+type AuthenticationResponse = ServerResponse<{
+  accessToken?: string;
+  refreshToken?: string;
+}>;
 
 export default abstract class authenticationValidator {
   static loginPayloadValidate(req: Request, h: ResponseToolkit) {

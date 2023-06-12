@@ -1,14 +1,16 @@
 import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
 import {
-  AuthenticationResponse,
+  type ServerResponse,
   type UserAuth,
   type RefreshTokenPayload,
 } from "../app.d";
 import UsersModel from "../models/UsersModel";
 import TokenManager from "../helpers/TokenManager";
 import AuthenticationsModel from "../models/AuthenticationsModel";
-import InvariantError from "../errors/InvariantError";
 import authenticationValidator from "../validators/authenticationsValidator";
+import { routeErrorHandler } from "../helpers/CommonErrorHandler";
+
+type AuthenticationResponse = ServerResponse<{accessToken?: string; refreshToken?: string }>;
 
 export const loginRouter: ServerRoute = {
   path: "/authentications",
@@ -104,19 +106,13 @@ export const refreshTokenRouter: ServerRoute = {
       );
       return res;
     } catch (error) {
-      if (error instanceof InvariantError) {
-        const response: AuthenticationResponse = {
-          status: "fail",
-          code: error.code as number,
-          message: error.message,
-        };
-        const res = h.response(response).code(response.code);
-        res.header(
-          "Content-Length",
-          String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-        );
-        return res;
-      }
+      const response = routeErrorHandler(error);
+      const res = h.response(response).code(response.code);
+      res.header(
+        "Content-Length",
+        String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+      );
+      return res;
     }
   },
   options: {
@@ -161,19 +157,13 @@ export const deleteTokenRouter: ServerRoute = {
       );
       return res;
     } catch (error) {
-      if (error instanceof InvariantError) {
-        const response: AuthenticationResponse = {
-          status: "fail",
-          code: error.code as number,
-          message: error.message,
-        };
-        const res = h.response(response).code(response.code);
-        res.header(
-          "Content-Length",
-          String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-        );
-        return res;
-      }
+      const response = routeErrorHandler(error);
+      const res = h.response(response).code(response.code);
+      res.header(
+        "Content-Length",
+        String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
+      );
+      return res;
     }
   },
   options: {

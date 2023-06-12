@@ -2,16 +2,20 @@ import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
 import PlaylistsModel from "../models/PlaylistsModel";
 import AuthorizationError from "../errors/AuthorizationError";
 import playlistValidator from "../validators/playlistsValidator";
-import NotFoundError from "../errors/NotFoundError";
-import InvariantError from "../errors/InvariantError";
-import InternalServerError from "../errors/InternalServerError";
-import ForbiddenError from "../errors/ForbiddenError";
 import UsersModel from "../models/UsersModel";
 import {
   PlaylistCreation,
   DatabaseResponse,
-  PlaylistsResponse,
+  ServerResponse,
+  Playlist,
 } from "../app.d";
+import { routeErrorHandler } from "../helpers/CommonErrorHandler";
+
+type PlaylistsResponse = ServerResponse<{
+  playlists?: Playlist[];
+  playlistId?: string;
+  playlist?: any;
+}>;
 
 export const createPlaylist: ServerRoute = {
   path: "/playlists",
@@ -52,21 +56,7 @@ export const createPlaylist: ServerRoute = {
 
       return res;
     } catch (error) {
-      let response: PlaylistsResponse;
-
-      if (error instanceof AuthorizationError)
-        response = {
-          status: "fail",
-          code: error.code,
-          message: error.message,
-        };
-      else
-        response = {
-          status: "fail",
-          code: 500,
-          message: "Internal Server Error",
-        };
-
+      const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(
         "Content-Length",
@@ -109,21 +99,8 @@ export const getPlaylists: ServerRoute = {
       );
       return res;
     } catch (error) {
-      let response: PlaylistsResponse;
-
-      if (error instanceof AuthorizationError)
-        response = {
-          status: "fail",
-          code: error.code,
-          message: error.message,
-        };
-      else
-        response = {
-          status: "fail",
-          code: 500,
-          message: "Internal Server Error",
-        };
-
+      console.error(error);
+      const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(
         "Content-Length",
@@ -146,7 +123,9 @@ export const removePlaylist: ServerRoute = {
     try {
       const { id } = req.params;
       const { id: ownerId } = req.auth.credentials as { id: string };
+
       await PlaylistsModel.remove(id as string, ownerId);
+
       const response: PlaylistsResponse = {
         status: "success",
         code: 200,
@@ -159,26 +138,7 @@ export const removePlaylist: ServerRoute = {
       );
       return res;
     } catch (error) {
-      let response: PlaylistsResponse;
-
-      if (
-        error instanceof InvariantError ||
-        error instanceof InternalServerError ||
-        error instanceof NotFoundError ||
-        error instanceof ForbiddenError
-      )
-        response = {
-          status: "fail",
-          code: error.code,
-          message: error.message,
-        };
-      else
-        response = {
-          status: "fail",
-          code: 500,
-          message: "Internal Server Error",
-        };
-
+      const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(
         "Content-Length",
@@ -218,25 +178,7 @@ export const addSongsRouter: ServerRoute = {
       );
       return res;
     } catch (error) {
-      let response: PlaylistsResponse;
-      if (
-        error instanceof InvariantError ||
-        error instanceof InternalServerError ||
-        error instanceof NotFoundError ||
-        error instanceof ForbiddenError
-      )
-        response = {
-          status: "fail",
-          code: error.code,
-          message: error.message,
-        };
-      else
-        response = {
-          status: "fail",
-          code: 500,
-          message: "Internal Server Error",
-        };
-
+      const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(
         "Content-Length",
@@ -269,7 +211,7 @@ export const getSongsInPlaylist: ServerRoute = {
     try {
       const songs = await PlaylistsModel.getSongs({ ownerId, playlistId });
       const playlist = await PlaylistsModel.getPlaylist(playlistId);
-      const username = await UsersModel.getUsername(ownerId);
+      const username = await UsersModel.getUsername(playlist.owner);
       const response: PlaylistsResponse = {
         status: "success",
         code: 200,
@@ -290,25 +232,7 @@ export const getSongsInPlaylist: ServerRoute = {
       );
       return res;
     } catch (error) {
-      let response: PlaylistsResponse;
-      if (
-        error instanceof InvariantError ||
-        error instanceof InternalServerError ||
-        error instanceof NotFoundError ||
-        error instanceof ForbiddenError
-      )
-        response = {
-          status: "fail",
-          code: error.code,
-          message: error.message,
-        };
-      else
-        response = {
-          status: "fail",
-          code: 500,
-          message: "Internal Server Error",
-        };
-
+      const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(
         "Content-Length",
@@ -348,25 +272,7 @@ export const removeSongInPlaylist: ServerRoute = {
       );
       return res;
     } catch (error) {
-      let response: PlaylistsResponse;
-      if (
-        error instanceof InvariantError ||
-        error instanceof InternalServerError ||
-        error instanceof NotFoundError ||
-        error instanceof ForbiddenError
-      )
-        response = {
-          status: "fail",
-          code: error.code,
-          message: error.message,
-        };
-      else
-        response = {
-          status: "fail",
-          code: 500,
-          message: "Internal Server Error",
-        };
-
+      const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(
         "Content-Length",

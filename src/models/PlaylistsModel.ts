@@ -6,10 +6,16 @@ import {
   PlaylistCreation,
   Playlist,
 } from "../app.d";
-import { Playlists, Songs, Users } from "../config/init";
+import {
+  Playlists,
+  PlaylistsScheme,
+  Songs,
+  Users,
+  collaborations,
+} from "../config/init";
+import { Op, NonNullFindOptions } from "sequelize";
 import InvariantError from "../errors/InvariantError";
 import NotFoundError from "../errors/NotFoundError";
-import { Op, NonNullFindOptions } from "sequelize";
 import ForbiddenError from "../errors/ForbiddenError";
 
 type PlaylistWithCredential = {
@@ -76,31 +82,87 @@ export default abstract class PlaylistsModel {
     const playlists = await Playlists.findAll({
       where: { owner },
       raw: true,
-      attributes: ["id", "name"],
+      attributes: ["id", "name", "owner"],
     });
     const user = await Users.findByPk(owner, {
       raw: true,
       attributes: ["username"],
     });
+    const playlistCollaborator = await collaborations.findAll({
+      where: {
+        userIds: [owner],
+      },
+      raw: true,
+      attributes: ["playlistId"],
+    });
 
     if (user === null)
       throw new Error(`Couldn't find username of id: ${owner}`);
 
-    return playlists.map(
-      (item): Playlist => ({ ...item, username: user.username })
+    const result: Playlist[] = [];
+
+    if (playlistCollaborator.length) {
+      const collaborationPlaylist = await Promise.all(
+        playlistCollaborator.map(async ({ playlistId }) => {
+          const playlist = await Playlists.findByPk(playlistId, {
+            raw: true,
+            attributes: ["id", "name", "owner"],
+          });
+
+          if (!playlist) return;
+
+          const user = await Users.findByPk(playlist.owner, {
+            raw: true,
+            attributes: ["username"],
+          });
+
+          if (!user) return;
+
+          return {
+            id: playlist.id,
+            name: playlist.name,
+            username: user.username,
+          };
+        })
+      );
+
+      const truthyPlaylist = collaborationPlaylist.filter(
+        Boolean
+      ) as Playlist[];
+
+      result.push(...truthyPlaylist);
+    }
+
+    result.push(
+      ...playlists.map(({ id, name }) => ({
+        id,
+        name,
+        username: user.username,
+      }))
     );
+
+    return result;
   }
 
   static async remove(playlistId: string, ownerId: string): Promise<void> {
-    const playlist = await Playlists.findByPk(playlistId);
+    const playlist = await Playlists.findByPk(playlistId, { raw: true });
 
     if (!playlist)
       throw new NotFoundError(`Playlist with id: ${playlistId} doesn't exist`);
 
+    const collaborationPlaylist = await collaborations.findOne({
+      where: { playlistId: playlist.id },
+      raw: true,
+    });
+
     if (playlist.owner !== ownerId)
       throw new ForbiddenError("Forbiden resource");
 
+    if (collaborationPlaylist)
+      await collaborations.destroy({ where: { id: collaborationPlaylist.id } });
+
     const affectedRow = await Playlists.destroy({ where: { id: playlistId } });
+
     if (!affectedRow)
       throw new NotFoundError(`Playlist with id: ${playlistId} doesn't exist`);
   }
@@ -109,28 +171,40 @@ export default abstract class PlaylistsModel {
     { ownerId, playlistId }: PlaylistWithCredential,
     songId: string
   ) {
-    const playlist = await Playlists.findByPk(playlistId);
+    const playlist = await Playlists.findByPk(playlistId, { raw: true });
+    const collaborationPlaylist = await collaborations.findOne({
+      where: {
+        [Op.and]: {
+          playlistId,
+          userIds: [ownerId],
+        },
+      },
+      raw: true,
+    });
 
     if (!playlist)
       throw new InvariantError(`Playlist with id: ${playlistId} doesn't exist`);
 
-    if (playlist.owner !== ownerId)
+    if (playlist.owner !== ownerId && !collaborationPlaylist)
       throw new ForbiddenError("Forbiden resource");
 
     if (!(await Songs.findByPk(songId)))
       throw new NotFoundError(`Song with id: ${songId} doesn't exist`);
 
-    const { songs } = (await Playlists.findOne({
+    const currentPlaylist = await Playlists.findOne({
       where: { id: playlistId },
       raw: true,
       attributes: ["songs"],
-    })) ?? { songs: [] };
+    });
 
-    const newSong = [songs ? songs : [], songId].flat(999);
+    const newSong = [
+      currentPlaylist?.songs ? currentPlaylist?.songs : [],
+      songId,
+    ].flat(999);
 
-    const affectedRow = await Playlists.update(
+    const [affectedRow] = await Playlists.update(
       { songs: newSong },
-      { where: { [Op.and]: { id: playlistId, owner: ownerId } } }
+      { where: { id: playlistId } }
     );
 
     if (!affectedRow) throw new InvariantError("Something went error");
@@ -141,11 +215,20 @@ export default abstract class PlaylistsModel {
       raw: true,
       attributes: ["songs", "owner"],
     });
+    const collaborationPlaylist = await collaborations.findOne({
+      where: {
+        [Op.and]: {
+          playlistId,
+          userIds: [ownerId],
+        },
+      },
+      raw: true,
+    });
 
     if (!playlist)
       throw new NotFoundError(`Playlist with id: ${playlistId} doesn't exist`);
 
-    if (playlist.owner !== ownerId)
+    if (playlist.owner !== ownerId && !collaborationPlaylist)
       throw new ForbiddenError("Forbiden resource");
 
     const songs = await Songs.findAll({
@@ -167,11 +250,20 @@ export default abstract class PlaylistsModel {
       raw: true,
       attributes: ["songs", "owner"],
     });
+    const collaborationPlaylist = await collaborations.findOne({
+      where: {
+        [Op.and]: {
+          playlistId,
+          userIds: [ownerId],
+        },
+      },
+      raw: true,
+    });
 
     if (!playlist)
       throw new NotFoundError(`Playlist with id: ${playlistId} doesn't exist`);
 
-    if (playlist.owner !== ownerId)
+    if (playlist.owner !== ownerId && !collaborationPlaylist)
       throw new ForbiddenError("Forbiden resource");
 
     if (!playlist.songs.includes(songId))
@@ -181,9 +273,6 @@ export default abstract class PlaylistsModel {
 
     const newSongs = playlist.songs.filter((song) => song !== songId);
 
-    await Playlists.update(
-      { songs: newSongs },
-      { where: { [Op.and]: { id: playlistId, owner: ownerId } } }
-    );
+    await Playlists.update({ songs: newSongs }, { where: { id: playlistId } });
   }
 }

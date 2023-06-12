@@ -1,12 +1,10 @@
-import { config } from "dotenv";
 import { Model, Sequelize } from "sequelize";
 import { AlbumsModelAttributes } from "./scheme/AlbumsModelAttributes";
 import { SongsModelAttributes } from "./scheme/SongsModelAttributes";
 import { UsersModelAttributes } from "./scheme/UsersModelAttributes";
 import { AuthenticationModelAttributes } from "./scheme/AuthenticationModelAttributes";
 import { PlaylistsModelAttributes } from "./scheme/PlaylistsModelAttributes";
-
-config();
+import { CollaborationsModelAttributes } from "./scheme/CollaborationsModelAttributes";
 
 const { PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT } = process.env;
 const sequelize = new Sequelize({
@@ -53,6 +51,12 @@ export class PlaylistsScheme extends Model {
   declare songs: string[];
 }
 
+export class CollaborationsScheme extends Model {
+  declare id: string;
+  declare playlistId: string;
+  declare userIds: string[];
+}
+
 AlbumsScheme.init(AlbumsModelAttributes, {
   sequelize,
   modelName: "albums",
@@ -83,6 +87,12 @@ PlaylistsScheme.init(PlaylistsModelAttributes, {
   timestamps: false,
 });
 
+CollaborationsScheme.init(CollaborationsModelAttributes, {
+  sequelize,
+  modelName: "collaborations",
+  timestamps: false,
+})
+
 export async function databaseSync(): Promise<void> {
   await sequelize.sync();
   console.log("Database synced");
@@ -93,3 +103,4 @@ export const Songs = SongsScheme;
 export const Users = UsersScheme;
 export const Auth = AuthenticationsScheme;
 export const Playlists = PlaylistsScheme;
+export const collaborations = CollaborationsScheme;
