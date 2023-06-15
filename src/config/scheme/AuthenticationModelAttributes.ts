@@ -1,8 +1,8 @@
-import { DataTypes, ModelAttributes } from "sequelize";
+import { DataTypes, type ModelAttributes } from 'sequelize'
 
 export const AuthenticationModelAttributes: ModelAttributes = {
   token: {
     type: DataTypes.TEXT,
-    allowNull: true,
+    allowNull: true
   }
 }

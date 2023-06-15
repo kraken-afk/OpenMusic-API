@@ -1,4 +1,4 @@
-import { DataTypes, ModelAttributes } from "sequelize";
+import { DataTypes, type ModelAttributes } from 'sequelize'
 
 export const CollaborationsModelAttributes: ModelAttributes = {
   id: {
@@ -10,8 +10,8 @@ export const CollaborationsModelAttributes: ModelAttributes = {
     type: DataTypes.STRING,
     allowNull: false,
     references: {
-      model: "playlists",
-      key: "id"
+      model: 'playlists',
+      key: 'id'
     }
   },
   userIds: {
@@ -19,4 +19,4 @@ export const CollaborationsModelAttributes: ModelAttributes = {
     allowNull: false,
     defaultValue: []
   }
-};
+}

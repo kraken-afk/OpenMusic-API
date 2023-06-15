@@ -1,9 +1,9 @@
 export default class ForbiddenError extends Error {
-  public code: number = 403;
+  public code = 403
 
-  constructor(
+  constructor (
     public message: string
   ) {
-    super(message);
+    super(message)
   }
 }

@@ -1,72 +1,72 @@
-import Joi from "joi";
-import { Request, ResponseToolkit } from "@hapi/hapi";
-import { ServerResponse, RefreshTokenPayload, UserAuth } from "../app.d";
+import Joi from 'joi'
+import { type Request, type ResponseToolkit } from '@hapi/hapi'
+import { type ServerResponse, type RefreshTokenPayload, type UserAuth } from '../app.d'
 
 type AuthenticationResponse = ServerResponse<{
-  accessToken?: string;
-  refreshToken?: string;
-}>;
+  accessToken?: string
+  refreshToken?: string
+}>
 
 export default abstract class authenticationValidator {
-  static loginPayloadValidate(req: Request, h: ResponseToolkit) {
-    const { username, password } = req.payload as UserAuth;
+  static loginPayloadValidate (req: Request, h: ResponseToolkit) {
+    const { username, password } = req.payload as UserAuth
     const userAuthScheme = Joi.object({
       username: Joi.string().alphanum().required(),
-      password: Joi.string().required(),
-    });
+      password: Joi.string().required()
+    })
 
-    const { error } = userAuthScheme.validate({ username, password });
+    const { error } = userAuthScheme.validate({ username, password })
 
-    if (!error) return h.continue;
+    if (error == null) return h.continue
     else {
       const response: AuthenticationResponse = {
-        status: "fail",
+        status: 'fail',
         code: 400,
-        message: "Bad request",
-      };
-      const res = h.response(response).code(response.code);
-      req.app = { invalidResponse: res };
-      return res;
+        message: 'Bad request'
+      }
+      const res = h.response(response).code(response.code)
+      req.app = { invalidResponse: res }
+      return res
     }
   }
 
-  static refreshTokenPayloadValidate(req: Request, h: ResponseToolkit) {
-    const { refreshToken } = req.payload as RefreshTokenPayload;
+  static refreshTokenPayloadValidate (req: Request, h: ResponseToolkit) {
+    const { refreshToken } = req.payload as RefreshTokenPayload
     const refreshTokenScheme = Joi.object({
-      refreshToken: Joi.string().required(),
-    });
-    const { error } = refreshTokenScheme.validate({ refreshToken });
+      refreshToken: Joi.string().required()
+    })
+    const { error } = refreshTokenScheme.validate({ refreshToken })
 
-    if (!error) return h.continue;
+    if (error == null) return h.continue
     else {
       const response: AuthenticationResponse = {
-        status: "fail",
+        status: 'fail',
         code: 400,
-        message: "Bad request",
-      };
-      const res = h.response(response).code(response.code);
-      req.app = { invalidResponse: res };
-      return res;
+        message: 'Bad request'
+      }
+      const res = h.response(response).code(response.code)
+      req.app = { invalidResponse: res }
+      return res
     }
   }
 
-  static deleteTokenPayloadValidate(req: Request, h: ResponseToolkit) {
-    const { refreshToken } = req.payload as RefreshTokenPayload;
+  static deleteTokenPayloadValidate (req: Request, h: ResponseToolkit) {
+    const { refreshToken } = req.payload as RefreshTokenPayload
     const refreshTokenScheme = Joi.object({
-      refreshToken: Joi.string().required(),
-    });
-    const { error } = refreshTokenScheme.validate({ refreshToken });
+      refreshToken: Joi.string().required()
+    })
+    const { error } = refreshTokenScheme.validate({ refreshToken })
 
-    if (!error) return h.continue;
+    if (error == null) return h.continue
     else {
       const response: AuthenticationResponse = {
-        status: "fail",
+        status: 'fail',
         code: 400,
-        message: "Bad request",
-      };
-      const res = h.response(response).code(response.code);
-      req.app = { invalidResponse: res };
-      return res;
+        message: 'Bad request'
+      }
+      const res = h.response(response).code(response.code)
+      req.app = { invalidResponse: res }
+      return res
     }
   }
 }

@@ -1,3 +1,3 @@
-import Encrypt from "./Encrypt";
+import Encrypt from './Encrypt'
 
-export const encrypt = new Encrypt();
+export const encrypt = new Encrypt()

@@ -1,17 +1,17 @@
-import { DataTypes, ModelAttributes } from "sequelize";
+import { DataTypes, type ModelAttributes } from 'sequelize'
 
 export const AlbumsModelAttributes: ModelAttributes = {
   id: {
     type: DataTypes.STRING,
     primaryKey: true,
-    allowNull: false,
+    allowNull: false
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false
   },
   year: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-};
+    allowNull: false
+  }
+}

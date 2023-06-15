@@ -8,11 +8,13 @@
     "rootDir": "src",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "strictNullChecks": true
   },
   "exclude": [
     "node_modules"
   ],
   "include": [
-    "src/app.d.ts"
+    "src"
   ]
 }

@@ -1,48 +1,48 @@
-import { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
+import { type Request, type ResponseToolkit, type ServerRoute } from '@hapi/hapi'
 import {
   type ServerResponse,
   type UserAuth,
-  type RefreshTokenPayload,
-} from "../app.d";
-import UsersModel from "../models/UsersModel";
-import TokenManager from "../helpers/TokenManager";
-import AuthenticationsModel from "../models/AuthenticationsModel";
-import authenticationValidator from "../validators/authenticationsValidator";
-import { routeErrorHandler } from "../helpers/CommonErrorHandler";
+  type RefreshTokenPayload
+} from '../app.d'
+import UsersModel from '../models/UsersModel'
+import TokenManager from '../helpers/TokenManager'
+import AuthenticationsModel from '../models/AuthenticationsModel'
+import authenticationValidator from '../validators/authenticationsValidator'
+import { routeErrorHandler } from '../helpers/CommonErrorHandler'
 
-type AuthenticationResponse = ServerResponse<{accessToken?: string; refreshToken?: string }>;
+type AuthenticationResponse = ServerResponse<{ accessToken?: string, refreshToken?: string }>
 
 export const loginRouter: ServerRoute = {
-  path: "/authentications",
-  method: "POST",
+  path: '/authentications',
+  method: 'POST',
   handler: async (req: Request, h: ResponseToolkit) => {
-    if ("invalidResponse" in req.app) return req.app.invalidResponse;
+    if ('invalidResponse' in req.app) return req.app.invalidResponse
 
-    const { username, password } = req.payload as UserAuth;
-    let response: AuthenticationResponse;
+    const { username, password } = req.payload as UserAuth
+    let response: AuthenticationResponse
 
-    const user = await UsersModel.find({ username, password });
+    const user = await UsersModel.find({ username, password })
 
     if (!user.status) {
       response = {
-        status: "fail",
+        status: 'fail',
         code: user.code as number,
-        message: user.message,
-      };
+        message: user.message
+      }
 
-      const res = h.response(response).code(response.code);
+      const res = h.response(response).code(response.code)
       res.header(
-        "Content-Length",
-        String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-      );
-      return res;
+        'Content-Length',
+        String(Buffer.byteLength(JSON.stringify(response), 'utf-8'))
+      )
+      return res
     } else {
-      const { id } = user.data;
-      const accessToken = TokenManager.generateAccess({ id });
-      const refreshToken = TokenManager.generateRefresh({ id });
+      const { id } = user.data
+      const accessToken = TokenManager.generateAccess({ id })
+      const refreshToken = TokenManager.generateRefresh({ id })
 
       try {
-        await AuthenticationsModel.add(refreshToken);
+        await AuthenticationsModel.add(refreshToken)
         response = {
           status: "success",
           code: user.code as number,
@@ -52,121 +52,122 @@ export const loginRouter: ServerRoute = {
           },
         };
 
-        const res = h.response(response).code(response.code);
+        const res = h.response(response).code(response.code)
         res.header(
-          "Content-Length",
-          String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-        );
-        return res;
+          'Content-Length',
+          String(Buffer.byteLength(JSON.stringify(response), 'utf-8'))
+        )
+        return res
       } catch (error) {
         response = {
-          status: "fail",
+          status: 'fail',
           code: error.code,
-          message: error.message,
-        };
-        const res = h.response(response).code(response.code);
+          message: error.message
+        }
+        const res = h.response(response).code(response.code)
         res.header(
-          "Content-Length",
-          String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-        );
-        return res;
+          'Content-Length',
+          String(Buffer.byteLength(JSON.stringify(response), 'utf-8'))
+        )
+        return res
       }
     }
   },
   options: {
-    pre: [{ method: authenticationValidator.loginPayloadValidate }],
-  },
-};
+    pre: [{ method: authenticationValidator.loginPayloadValidate }]
+  }
+}
 
 export const refreshTokenRouter: ServerRoute = {
-  path: "/authentications",
-  method: "PUT",
+  path: '/authentications',
+  method: 'PUT',
   handler: async (req: Request, h: ResponseToolkit) => {
-    if ("invalidResponse" in req.app) return req.app.invalidResponse;
+    if ('invalidResponse' in req.app) return req.app.invalidResponse
 
-    const { refreshToken } = req.payload as RefreshTokenPayload;
+    const { refreshToken } = req.payload as RefreshTokenPayload
 
     try {
       const { token } = await AuthenticationsModel.verifyToken(
         refreshToken as string
-      );
+      )
       const {
-        payload: { id },
-      } = TokenManager.verify(token);
-      const accessToken = TokenManager.generateAccess(id);
+        payload: { id }
+      } = TokenManager.verify(token)
+      const accessToken = TokenManager.generateAccess(id)
       const response: AuthenticationResponse = {
-        status: "success",
+        status: 'success',
         code: 200,
-        data: { accessToken },
-      };
-      const res = h.response(response).code(response.code);
+        data: { accessToken }
+      }
+      const res = h.response(response).code(response.code)
       res.header(
-        "Content-Length",
-        String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-      );
-      return res;
+        'Content-Length',
+        String(Buffer.byteLength(JSON.stringify(response), 'utf-8'))
+      )
+      return res
     } catch (error) {
-      const response = routeErrorHandler(error);
-      const res = h.response(response).code(response.code);
+      const response = routeErrorHandler(error)
+      const res = h.response(response).code(response.code)
       res.header(
-        "Content-Length",
-        String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-      );
-      return res;
+        'Content-Length',
+        String(Buffer.byteLength(JSON.stringify(response), 'utf-8'))
+      )
+      return res
     }
   },
   options: {
-    pre: [{ method: authenticationValidator.refreshTokenPayloadValidate }],
-  },
-};
+    pre: [{ method: authenticationValidator.refreshTokenPayloadValidate }]
+  }
+}
 
 export const deleteTokenRouter: ServerRoute = {
-  path: "/authentications",
-  method: "DELETE",
+  path: '/authentications',
+  method: 'DELETE',
   handler: async (req: Request, h: ResponseToolkit) => {
-    if ("invalidResponse" in req.app) return req.app.invalidResponse;
+    if ('invalidResponse' in req.app) return req.app.invalidResponse
 
-    const { refreshToken } = req.payload as RefreshTokenPayload;
+    const { refreshToken } = req.payload as RefreshTokenPayload
 
     try {
       const { token } = await AuthenticationsModel.verifyToken(
         refreshToken as string
-      );
+      )
       const { status, message, code } = await AuthenticationsModel.deleteToken(
         token
-      );
-      let response: AuthenticationResponse;
+      )
+      let response: AuthenticationResponse
 
-      if (!status)
+      if (!status) {
         response = {
-          status: "fail",
+          status: 'fail',
           code: code as number,
-          message: message,
-        };
-      else
+          message
+        }
+      } else {
         response = {
-          status: "success",
+          status: 'success',
           code: code as number,
-          message: message,
-        };
+          message
+        }
+      }
 
-      const res = h.response(response).code(response.code);
+      const res = h.response(response).code(response.code)
       res.header(
-        "Content-Length",
-        String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-      );
-      return res;
+        'Content-Length',
+        String(Buffer.byteLength(JSON.stringify(response), 'utf-8'))
+      )
+      return res
     } catch (error) {
-      const response = routeErrorHandler(error);
-      const res = h.response(response).code(response.code);
+      const response = routeErrorHandler(error)
+      const res = h.response(response).code(response.code)
       res.header(
-        "Content-Length",
-        String(Buffer.byteLength(JSON.stringify(response), "utf-8"))
-      );
-      return res;
+        'Content-Length',
+        String(Buffer.byteLength(JSON.stringify(response), 'utf-8'))
+      )
+      return res
     }
   },
   options: {
-    pre: [{ method: authenticationValidator.deleteTokenPayloadValidate }],
-  },
-};
+    pre: [{ method: authenticationValidator.deleteTokenPayloadValidate }]
+  }
+}
