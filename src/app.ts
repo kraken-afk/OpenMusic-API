@@ -2,12 +2,12 @@ import * as Hapi from '@hapi/hapi'
 import * as Jwt from '@hapi/jwt'
 import process from 'node:process'
 import { router } from './routes'
-import { databaseSync } from './config/init';
+import { databaseSync } from './config/init'
 import { config } from 'dotenv'
 
 config()
 
-async function init () {
+async function init() {
   const host = process.env?.HOST ?? '127.0.0.1'
   const port = process.env?.PORT ? parseInt(process.env.PORT) : 5000
   const server = Hapi.server({ host, port })
@@ -23,7 +23,7 @@ async function init () {
       sub: false,
       maxAgeSec: 1800
     },
-    validate: (artifacts) => ({
+    validate: artifacts => ({
       isValid: true,
       credentials: {
         id: artifacts.decoded.payload.id

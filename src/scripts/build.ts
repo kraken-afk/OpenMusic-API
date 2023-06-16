@@ -9,7 +9,7 @@ const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env;
 
 (async () => {
   await createDatabaseIfNotExists()
-  compileTypeScript()
+  // compileTypeScript()
 })()
 
 function compileTypeScript (): void {
