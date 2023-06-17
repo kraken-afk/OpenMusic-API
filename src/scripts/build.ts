@@ -5,14 +5,36 @@ import process from 'node:process'
 
 config()
 
-const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env;
-
-(async () => {
+const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env
+;(async () => {
   await createDatabaseIfNotExists()
-  // compileTypeScript()
+  await runMigrations()
+  compileTypeScript()
 })()
 
-function compileTypeScript (): void {
+function runMigrations() {
+  return new Promise((resolve, reject) => {
+    console.log('Running migrations...')
+
+    exec('npx sequelize-cli db:migrate', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error running migrations: ${error.message}`)
+        reject(error.message)
+      }
+
+      if (stderr) {
+        console.error(`Migration stderr: ${stderr}`)
+        reject(stderr)
+      }
+
+      console.log(stdout)
+      console.log('Migrations completed successfully')
+      resolve(undefined)
+    })
+  })
+}
+
+function compileTypeScript(): void {
   console.log('Compiling TypeScript...')
   exec(
     'npx tsc src/app.ts --outDir ./dist --esModuleInterop --target es6 --moduleResolution node --module nodenext --experimentalDecorators --skipLibCheck',
@@ -25,14 +47,14 @@ function compileTypeScript (): void {
         console.error(`Command execution failed with error: ${stderr}`)
         process.exit(1)
       }
-      console.info(`${stdout}`)
       console.info('TypeScript Compiled')
+      console.info(`${stdout}`)
       process.exit(0)
     }
   )
 }
 
-async function createDatabaseIfNotExists (): Promise<void> {
+async function createDatabaseIfNotExists(): Promise<void> {
   const client = new Client({
     user: PGUSER,
     password: PGPASSWORD,
@@ -55,9 +77,7 @@ async function createDatabaseIfNotExists (): Promise<void> {
 
     if (result.rows.length === 0) {
       // Create the database if it doesn't exist
-      console.log(
-        `Database doesn't exist, creating database with name ${PGDATABASE}...`
-      )
+      console.log(`Database doesn't exist, creating database with name ${PGDATABASE}...`)
       await client.query(`CREATE DATABASE ${PGDATABASE};`)
       console.log(`Database '${PGDATABASE}' created successfully.`)
     } else console.log(`Database '${PGDATABASE}' already exists.`)

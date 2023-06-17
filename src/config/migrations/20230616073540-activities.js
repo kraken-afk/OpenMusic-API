@@ -10,7 +10,7 @@ module.exports = {
    */
   async up(queryInterface, Sequelize) {
     const scheme = await importParse('src/config/scheme/PlaylistActivitiesModelAttributes.ts');
-    await queryInterface.createTable('activities', scheme.PlaylistActivitiesModelAttributes)
+    await queryInterface.createTable('playlistActivities', scheme.PlaylistActivitiesModelAttributes)
   },
 
   /**
@@ -19,6 +19,6 @@ module.exports = {
    * @param {(import('sequelize').Sequelize} Sequelize
    */
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('activities');
+    await queryInterface.dropTable('playlistActivities');
   }
 };

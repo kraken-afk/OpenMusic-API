@@ -9,8 +9,8 @@ module.exports = {
    * @param {(import('sequelize').Sequelize)} Sequelize
    */
   async up(queryInterface, Sequelize) {
-    const scheme = await importParse('src/config/scheme/PlaylistActivitiesModelAttributes.ts');
-    await queryInterface.createTable('playlists', scheme.PlaylistActivitiesModelAttributes)
+    const scheme = await importParse('src/config/scheme/PlaylistsModelAttributes.ts');
+    await queryInterface.createTable('playlists', scheme.PlaylistsModelAttributes)
   },
 
   /**

@@ -51,7 +51,7 @@ export const createPlaylist: ServerRoute = {
       if (!dbResponse.status) {
         response = {
           status: 'fail',
-          code: dbResponse.code,
+          code: dbResponse.code as number,
           message: dbResponse.message
         }
       } else {

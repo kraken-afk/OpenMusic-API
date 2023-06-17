@@ -12,13 +12,13 @@ export default abstract class AuthenticationsModel {
     try {
       await Auth.create({ token })
       return true
-    } catch {
+    } catch (error) {
       throw new InternalServerError('Internal server error')
     }
   }
 
   static async verifyToken (refreshToken: string): Promise<{ token: string }> {
-    const token = await Auth.findOne({ where: { token: refreshToken } })
+    const token = await Auth.findOne({ where: { token: refreshToken }, attributes: ['token'] })
 
     if (token == null) throw new InvariantError('Invalid token', 400)
 

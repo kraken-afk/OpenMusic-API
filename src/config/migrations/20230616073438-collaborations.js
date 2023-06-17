@@ -10,7 +10,7 @@ module.exports = {
    */
   async up(queryInterface, Sequelize) {
     const scheme = await importParse('src/config/scheme/CollaborationsModelAttributes.ts');
-    await queryInterface.createTable('collaborations', scheme.CollaborationsModelAttributess)
+    await queryInterface.createTable('collaborations', scheme.CollaborationsModelAttributes);
   },
 
   /**
