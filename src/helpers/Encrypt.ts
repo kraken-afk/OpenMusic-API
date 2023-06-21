@@ -1,19 +1,19 @@
-import { type HashOptions, type BinaryToTextEncoding, createHash } from 'node:crypto'
+import { type BinaryToTextEncoding, type HashOptions, createHash } from "node:crypto";
 
 export default class Encrypt {
-  constructor (
-    protected algorithm: string = 'sha256',
-    protected encoding: BinaryToTextEncoding = 'base64'
+  constructor(
+    protected algorithm = "sha256",
+    protected encoding: BinaryToTextEncoding = "base64",
   ) {}
 
-  public generate (data: string, options?: HashOptions | undefined): string {
-    const { algorithm, encoding } = this
-    const hashedValue = createHash(algorithm, options).update(data).digest(encoding)
+  public generate(data: string, options?: HashOptions | undefined): string {
+    const { algorithm, encoding } = this;
+    const hashedValue = createHash(algorithm, options).update(data).digest(encoding);
 
-    return hashedValue
+    return hashedValue;
   }
 
-  public match (input: string, hashedInput: string): boolean {
-    return (this.generate(input) === hashedInput)
+  public match(input: string, hashedInput: string): boolean {
+    return this.generate(input) === hashedInput;
   }
 }

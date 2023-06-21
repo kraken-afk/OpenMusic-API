@@ -1,37 +1,37 @@
-import { DataTypes, type ModelAttributes } from 'sequelize'
+import { DataTypes, type ModelAttributes } from "sequelize";
 
 export const SongsModelAttributes: ModelAttributes = {
   id: {
     type: DataTypes.STRING,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
   },
   title: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   performer: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   genre: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   year: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   duration: {
     type: DataTypes.INTEGER,
-    allowNull: true
+    allowNull: true,
   },
   albumId: {
     type: DataTypes.STRING,
     allowNull: true,
     references: {
-      model: 'albums',
-      key: 'id'
-    }
-  }
-}
+      model: "albums",
+      key: "id",
+    },
+  },
+};

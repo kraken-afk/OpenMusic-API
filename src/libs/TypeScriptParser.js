@@ -1,7 +1,7 @@
-const ts = require('typescript');
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const _eval = require('eval');
+const ts = require("typescript");
+const fs = require("node:fs/promises");
+const path = require("node:path");
+const _eval = require("eval");
 
 /**
  *
@@ -10,7 +10,7 @@ const _eval = require('eval');
  */
 async function parse(filePath, pathToTsConfig) {
   try {
-    const fileContents = await fs.readFile(filePath, 'utf8');
+    const fileContents = await fs.readFile(filePath, "utf8");
 
     const tsconfigPath = path.resolve(pathToTsConfig);
 
@@ -22,11 +22,11 @@ async function parse(filePath, pathToTsConfig) {
     const { options, errors } = ts.parseJsonConfigFileContent(
       config,
       ts.sys,
-      path.dirname(tsconfigPath)
+      path.dirname(tsconfigPath),
     );
     if (errors.length > 0) {
       throw new Error(
-        `Error parsing tsconfig.json: ${errors.map((e) => e.messageText).join('\n')}`
+        `Error parsing tsconfig.json: ${errors.map((e) => e.messageText).join("\n")}`,
       );
     }
 
@@ -37,15 +37,17 @@ async function parse(filePath, pathToTsConfig) {
 
     if (result.diagnostics && result.diagnostics.length > 0) {
       const errors = result.diagnostics.map((diagnostic) => {
-        const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+        const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n");
         if (diagnostic.file) {
-          const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+          const { line, character } = diagnostic.file.getLineAndCharacterOfPosition(
+            diagnostic.start,
+          );
           return `${diagnostic.file.fileName} (${line + 1},${character + 1}): ${message}`;
         } else {
           return message;
         }
       });
-      throw new Error(errors.join('\n'));
+      throw new Error(errors.join("\n"));
     }
 
     return result.outputText;
@@ -60,12 +62,13 @@ async function parse(filePath, pathToTsConfig) {
  * @returns {typeof object}
  */
 async function importParse(path) {
-  const code = await parse(path, 'tsconfig.json');
+  const code = await parse(path, "tsconfig.json");
   const modules = _eval(code, true);
 
   return modules;
 }
 
 module.exports = {
-  parse, importParse
+  parse,
+  importParse,
 };

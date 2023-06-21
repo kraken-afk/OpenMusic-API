@@ -1,8 +1,7 @@
 export default class InternalServerError extends Error {
-  constructor (
-    public message: string,
-    public code: number = 500
-  ) {
-    super(message)
+  public code = 500;
+
+  constructor(public message: string) {
+    super(message);
   }
 }

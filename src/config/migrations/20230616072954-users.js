@@ -1,5 +1,5 @@
-'use strict';
-const { importParse } = require('../../libs/TypeScriptParser');
+"use strict";
+const { importParse } = require("../../libs/TypeScriptParser");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -8,9 +8,9 @@ module.exports = {
    * @param {(import('sequelize').QueryInterface))} queryInterface
    * @param {(import('sequelize').Sequelize)} Sequelize
    */
-  async up (queryInterface, Sequelize) {
-    const scheme = await importParse('src/config/scheme/UsersModelAttributes.ts');
-    await queryInterface.createTable('users', scheme.UsersModelAttributes)
+  async up(queryInterface, Sequelize) {
+    const scheme = await importParse("src/config/scheme/UsersModelAttributes.ts");
+    await queryInterface.createTable("users", scheme.UsersModelAttributes);
   },
 
   /**
@@ -18,7 +18,7 @@ module.exports = {
    * @param {(import('sequelize').QueryInterface))} queryInterface
    * @param {(import('sequelize').Sequelize)} Sequelize
    */
-  async down (queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
-  }
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("users");
+  },
 };

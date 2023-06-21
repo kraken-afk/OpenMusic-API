@@ -1,49 +1,50 @@
 import {
-  type DatabaseResponsePositive,
+  type DatabaseResponse,
   type DatabaseResponseNegative,
-  type DatabaseResponse
-} from '../app.d'
-import { Auth } from '../config/init'
-import InternalServerError from '../errors/InternalServerError'
-import InvariantError from '../errors/InvariantError'
+  type DatabaseResponsePositive,
+} from "../app.d";
+import { Auth } from "../config/init";
+import InternalServerError from "../errors/InternalServerError";
+import InvariantError from "../errors/InvariantError";
 
 export default abstract class AuthenticationsModel {
-  static async add (token: string): Promise<boolean> {
+  static async add(token: string): Promise<boolean> {
     try {
-      await Auth.create({ token })
-      return true
+      await Auth.create({ token });
+      return true;
     } catch (error) {
-      throw new InternalServerError('Internal server error')
+      throw new InternalServerError("Internal server error");
     }
   }
 
-  static async verifyToken (refreshToken: string): Promise<{ token: string }> {
-    const token = await Auth.findOne({ where: { token: refreshToken }, attributes: ['token'] })
+  static async verifyToken(refreshToken: string): Promise<{ token: string }> {
+    const token = await Auth.findOne({
+      where: { token: refreshToken },
+      attributes: ["token"],
+    });
 
-    if (token == null) throw new InvariantError('Invalid token', 400)
+    if (token == null) throw new InvariantError("Invalid token");
 
-    return token
+    return token;
   }
 
-  static async deleteToken (
-    refreshToken: string
-  ): Promise<DatabaseResponse<object>> {
-    const affectedRow = await Auth.destroy({ where: { token: refreshToken } })
+  static async deleteToken(refreshToken: string): Promise<DatabaseResponse<object>> {
+    const affectedRow = await Auth.destroy({ where: { token: refreshToken } });
 
     if (affectedRow === 0) {
       const response: DatabaseResponseNegative = {
         status: false,
         code: 400,
-        message: "Couldn't found token in the database"
-      }
-      return response
+        message: "Couldn't found token in the database",
+      };
+      return response;
     }
     const response: DatabaseResponsePositive<object> = {
       status: true,
       code: 200,
-      message: 'Token deleted',
-      data: {}
-    }
-    return response
+      message: "Token deleted",
+      data: {},
+    };
+    return response;
   }
 }
