@@ -62,7 +62,7 @@ export default abstract class SongsModel {
       const [affectedRow] = await Songs.update(song, { where: { id } });
 
       if (affectedRow === 0) {
-        throw new NotFoundError(`Song with id: ${id} doesn't exist`, 404);
+        throw new NotFoundError(`Song with id: ${id} doesn't exist`);
       }
 
       const response: DatabaseResponsePositive<{ message: string }> = {
@@ -87,7 +87,7 @@ export default abstract class SongsModel {
       const affectedRow = await Songs.destroy({ where: { id } });
 
       if (affectedRow === 0) {
-        throw new NotFoundError(`Song with id: ${id} doesn't exist`, 404);
+        throw new NotFoundError(`Song with id: ${id} doesn't exist`);
       }
 
       const response: DatabaseResponsePositive<{ message: string }> = {
