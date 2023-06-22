@@ -5,7 +5,7 @@ import {
   type DatabaseResponse,
   type DatabaseResponseNegative,
   type DatabaseResponsePositive,
-} from "../app.d";
+} from "../type";
 import { Albums } from "../config/init";
 import NotFoundError from "../errors/NotFoundError";
 import shortid from "shortid";

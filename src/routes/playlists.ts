@@ -5,7 +5,7 @@ import {
   type Playlist,
   type PlaylistCreation,
   type ServerResponse,
-} from "../app.d";
+} from "../type";
 import AuthorizationError from "../errors/AuthorizationError";
 import { routeErrorHandler } from "../helpers/CommonErrorHandler";
 import PlaylistActivitesModel from "../models/PlaylistActivitiesModel";

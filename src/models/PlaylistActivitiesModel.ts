@@ -1,4 +1,4 @@
-import { type Action, type PlaylistWithCredential, type RecordPayload } from "../app.d";
+import { type Action, type PlaylistWithCredential, type RecordPayload } from "../type";
 import { Activities, Playlists } from "../config/init";
 import ForbiddenError from "../errors/ForbiddenError";
 import InternalServerError from "../errors/InternalServerError";

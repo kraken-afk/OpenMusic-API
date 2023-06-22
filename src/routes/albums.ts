@@ -1,4 +1,4 @@
-import { type Album, type AlbumsCreation, type ServerResponse } from "../app.d";
+import { type Album, type AlbumsCreation, type ServerResponse } from "../type";
 import type { Request, ResponseToolkit, ServerRoute } from "@hapi/hapi";
 import { Buffer } from "node:buffer";
 import AlbumsModel from "../models/AlbumsModel";

@@ -21,5 +21,5 @@ export const PlaylistsModelAttributes: ModelAttributes = {
   songs: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
-  },
+  }
 };

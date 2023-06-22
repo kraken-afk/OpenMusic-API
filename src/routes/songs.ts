@@ -1,5 +1,5 @@
 import { SongsScheme } from "src/config/init";
-import { type ServerResponse, type SongsCreation } from "../app.d";
+import { type ServerResponse, type SongsCreation } from "../type";
 import SongsModel from "../models/SongsModel";
 import validateSongsCreation from "../validators/songsValidator";
 import { type Request, type ResponseToolkit, type ServerRoute } from "@hapi/hapi";

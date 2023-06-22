@@ -1,4 +1,4 @@
-import { type CollaborationCreationPayload, type ServerResponse } from "../app.d";
+import { type CollaborationCreationPayload, type ServerResponse } from "../type";
 import { type Request, type ResponseToolkit } from "@hapi/hapi";
 import Joi from "joi";
 

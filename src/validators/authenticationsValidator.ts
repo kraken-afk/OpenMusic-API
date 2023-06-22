@@ -1,4 +1,4 @@
-import { type RefreshTokenPayload, type ServerResponse, type UserAuth } from "../app.d";
+import { type RefreshTokenPayload, type ServerResponse, type UserAuth } from "../type";
 import { type Request, type ResponseToolkit } from "@hapi/hapi";
 import Joi from "joi";
 

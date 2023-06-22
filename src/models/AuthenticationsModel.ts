@@ -2,7 +2,7 @@ import {
   type DatabaseResponse,
   type DatabaseResponseNegative,
   type DatabaseResponsePositive,
-} from "../app.d";
+} from "../type";
 import { Auth } from "../config/init";
 import InternalServerError from "../errors/InternalServerError";
 import InvariantError from "../errors/InvariantError";

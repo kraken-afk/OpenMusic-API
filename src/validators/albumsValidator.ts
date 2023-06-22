@@ -1,4 +1,4 @@
-import type { Album, AlbumsCreation, ServerResponse } from "../app.d";
+import type { Album, AlbumsCreation, ServerResponse } from "../type";
 import { type Request, type ResponseToolkit } from "@hapi/hapi";
 import Joi from "joi";
 

@@ -6,7 +6,7 @@ import {
   type Playlist,
   type PlaylistCreation,
   type PlaylistWithCredential,
-} from "../app.d";
+} from "../type";
 import { Playlists, Songs, Users, collaborations } from "../config/init";
 import ForbiddenError from "../errors/ForbiddenError";
 import InvariantError from "../errors/InvariantError";

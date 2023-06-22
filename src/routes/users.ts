@@ -1,4 +1,4 @@
-import { type ServerResponse, type UserCreation } from "../app.d";
+import { type ServerResponse, type UserCreation } from "../type";
 import UsersModel from "../models/UsersModel";
 import { validateUserCreation } from "../validators/usersValidator";
 import { type Request, type ResponseToolkit, type ServerRoute } from "@hapi/hapi";

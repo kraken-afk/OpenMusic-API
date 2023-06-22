@@ -3,7 +3,7 @@ import {
   type DatabaseResponseNegative,
   type DatabaseResponsePositive,
   type SongsCreation,
-} from "../app.d";
+} from "../type";
 import { Songs, type SongsScheme } from "../config/init";
 import NotFoundError from "../errors/NotFoundError";
 import { type FindOptions } from "sequelize";

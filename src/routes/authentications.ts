@@ -1,4 +1,4 @@
-import { type RefreshTokenPayload, type ServerResponse, type UserAuth } from "../app.d";
+import { type RefreshTokenPayload, type ServerResponse, type UserAuth } from "../type";
 import { routeErrorHandler } from "../helpers/CommonErrorHandler";
 import TokenManager from "../helpers/TokenManager";
 import AuthenticationsModel from "../models/AuthenticationsModel";

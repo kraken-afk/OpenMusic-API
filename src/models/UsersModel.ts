@@ -4,7 +4,7 @@ import {
   type DatabaseResponsePositive,
   type UserAuth,
   type UserCreation,
-} from "../app.d";
+} from "../type";
 import { Users, type UsersScheme } from "../config/init";
 import NotFoundError from "../errors/NotFoundError";
 import { encrypt } from "../helpers";

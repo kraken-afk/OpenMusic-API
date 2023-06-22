@@ -1,4 +1,4 @@
-import { type Playlist, type PlaylistCreation, type ServerResponse } from "../app.d";
+import { type Playlist, type PlaylistCreation, type ServerResponse } from "../type";
 import { type Request, type ResponseToolkit } from "@hapi/hapi";
 import Joi from "joi";
 

@@ -2,7 +2,7 @@ import {
   type DatabaseResponse,
   type DatabaseResponseNegative,
   type DatabaseResponsePositive,
-} from "../app.d";
+} from "../type";
 import { Playlists, Users, collaborations } from "../config/init";
 import ForbiddenError from "../errors/ForbiddenError";
 import InternalServerError from "../errors/InternalServerError";

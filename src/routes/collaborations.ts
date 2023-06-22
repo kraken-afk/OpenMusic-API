@@ -1,4 +1,4 @@
-import { type CollaborationCreationPayload, type ServerResponse } from "../app.d";
+import { type CollaborationCreationPayload, type ServerResponse } from "../type";
 import { routeErrorHandler } from "../helpers/CommonErrorHandler";
 import CollaborationsModel from "../models/CollaborationsModel";
 import collaborationsValidator from "../validators/collaborationsValidator";
