@@ -199,7 +199,7 @@ export const albumCoverUploadRouter: ServerRoute = {
       await writeFile(path.join(dirPath, fileName), input);
 
       Albums.update(
-        { coverUrl: new URL(`uploads/${fileName}`, req.server.info.uri) },
+        { coverUrl: new URL(`uploads/${fileName}`, req.server.info.uri).href },
         { where: { id: albumId } },
       );
 
