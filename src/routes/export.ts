@@ -40,7 +40,6 @@ export const exportPlaylistRouter: ServerRoute = {
       );
       return res;
     } catch (error) {
-      console.error(error);
       const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
 

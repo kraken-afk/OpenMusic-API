@@ -5,13 +5,15 @@ import * as PlaylistsRouter from "./playlists";
 import * as SongsRouter from "./songs";
 import * as UsersRouter from "./users";
 import * as ExportRouter from "./export";
+import * as UploadsRouter from "./uploads";
 
 export const router = {
-  ...SongsRouter,
   ...AlbumsRouter,
+  ...SongsRouter,
   ...UsersRouter,
   ...AuthenticationsRouter,
   ...PlaylistsRouter,
   ...CollaborationsRouter,
-  ...ExportRouter
+  ...ExportRouter,
+  ...UploadsRouter,
 };

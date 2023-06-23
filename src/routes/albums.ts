@@ -4,6 +4,14 @@ import { Buffer } from "node:buffer";
 import AlbumsModel from "../models/AlbumsModel";
 import SongsModel from "../models/SongsModel";
 import validateAlbumCreation from "../validators/albumsValidator";
+import InvariantError from "../errors/InvariantError";
+import { routeErrorHandler } from "../helpers/CommonErrorHandler";
+import { coverUploadsValidator } from "../validators/coverUploadsValidator";
+import { existsSync } from "node:fs";
+import { mkdir, readdir, unlink, writeFile } from "node:fs/promises";
+import path, { resolve } from "node:path";
+import { Albums } from "../config/init";
+import { URL } from "node:url";
 
 type AlbumsResponse = ServerResponse<{ albumId: string } | { album: Album }>;
 
@@ -155,5 +163,76 @@ export const deleteAlbumsRouter: ServerRoute = {
     );
 
     return res;
+  },
+};
+
+export const albumCoverUploadRouter: ServerRoute = {
+  path: "/albums/{id}/covers",
+  method: "POST",
+  handler: async (req: Request, h: ResponseToolkit) => {
+    if ("invalidResponse" in req.app) return req.app.invalidResponse;
+
+    try {
+      const { cover } = req.payload as { cover: object };
+      const { id: albumId } = req.params;
+
+      if (!cover) throw new InvariantError("Bad Payload");
+
+      const {
+        _data,
+        hapi: { filename },
+      } = cover as { _data: Buffer; hapi: { filename: string } };
+      const input: Buffer = _data;
+      const fileName = `${+new Date()}.${albumId}.${filename}`;
+      const dirPath = resolve(__dirname, "./../uploads");
+
+      if (!existsSync(dirPath)) await mkdir(dirPath);
+
+      const dir = await readdir(dirPath);
+
+      await Promise.all([
+        dir.some(async (s, i) => {
+          if (s.includes(albumId)) await unlink(path.join(dirPath, dir[i]));
+        }),
+      ]);
+
+      await writeFile(path.join(dirPath, fileName), input);
+
+      Albums.update(
+        { coverUrl: new URL(`uploads/${fileName}`, req.server.info.uri) },
+        { where: { id: albumId } },
+      );
+
+      const response = {
+        status: "success",
+        code: 201,
+        message: "Cover uploaded",
+      };
+      const res = h.response(response).code(response.code);
+      res.header(
+        "Content-Length",
+        String(Buffer.byteLength(JSON.stringify(response), "utf-8")),
+      );
+      return res;
+    } catch (error) {
+      const response = routeErrorHandler(error);
+      const res = h.response(response).code(response.code);
+      res.header(
+        "Content-Length",
+        String(Buffer.byteLength(JSON.stringify(response), "utf-8")),
+      );
+      return res;
+    }
+  },
+  options: {
+    payload: {
+      parse: true,
+      allow: "multipart/form-data",
+      maxBytes: 512000,
+      multipart: {
+        output: "stream",
+      },
+    },
+    pre: [{ method: coverUploadsValidator }],
   },
 };

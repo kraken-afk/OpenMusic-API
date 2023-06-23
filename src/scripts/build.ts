@@ -9,7 +9,7 @@ const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env;
 (async () => {
   await createDatabaseIfNotExists();
   await runMigrations();
-  compileTypeScript();
+  // compileTypeScript();
 })();
 
 function runMigrations() {
@@ -37,7 +37,7 @@ function runMigrations() {
 function compileTypeScript(): void {
   console.log("Compiling TypeScript...");
   exec(
-    "npx tsc src/app.ts --outDir ./dist --esModuleInterop --target es6 --moduleResolution node --module nodenext --experimentalDecorators --skipLibCheck",
+    "npx tsc src/server.ts --outDir ./dist --esModuleInterop --target es6 --moduleResolution node --module nodenext --experimentalDecorators --skipLibCheck",
     (error: ExecException | null, stdout: string, stderr: string) => {
       if (error != null) {
         console.error("Error: ", error);

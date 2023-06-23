@@ -40,7 +40,8 @@ export default abstract class AlbumsModel {
   }
 
   static async get(id: string): Promise<Album | null> {
-    const album: Album | null = await Albums.findByPk(id, { raw: true });
+    const album = await Albums.findByPk(id, { raw: true });
+    console.log(album);
     return album;
   }
 

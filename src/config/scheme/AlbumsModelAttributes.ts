@@ -14,4 +14,8 @@ export const AlbumsModelAttributes: ModelAttributes = {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  coverUrl: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 };

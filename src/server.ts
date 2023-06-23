@@ -2,6 +2,7 @@ import { databaseSync } from "./config/init";
 import { router } from "./routes";
 import * as Hapi from "@hapi/hapi";
 import * as Jwt from "@hapi/jwt";
+import * as Inert from "@hapi/inert"
 import { config } from "dotenv";
 import process from "node:process";
 
@@ -13,7 +14,7 @@ async function init() {
   const server = Hapi.server({ host, port });
 
   await databaseSync();
-  await server.register([{ plugin: Jwt }]);
+  await server.register([{ plugin: Jwt }, { plugin: Inert }]);
 
   server.auth.strategy("openmusic_jwt", "jwt", {
     keys: process.env.ACCESS_TOKEN_KEY,

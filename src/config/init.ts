@@ -22,6 +22,7 @@ export class AlbumsScheme extends Model {
   declare id: string;
   declare name: string;
   declare year: number;
+  declare coverUrl: string | null;
 }
 
 export class SongsScheme extends Model {
