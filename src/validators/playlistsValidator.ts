@@ -1,11 +1,12 @@
 import { type Playlist, type PlaylistCreation, type ServerResponse } from "../type";
 import { type Request, type ResponseToolkit } from "@hapi/hapi";
+import { SongsScheme } from "../config/init";
 import Joi from "joi";
 
 type PlaylistsResponse = ServerResponse<{
   playlists?: Playlist[];
   playlistId?: string;
-  playlist?: any;
+  playlist?: { id: string; name: string; username: string; songs: SongsScheme[] };
 }>;
 
 export default abstract class playlistValidator {
