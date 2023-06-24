@@ -7,6 +7,7 @@ import { RABBITMQ_QEUE } from "../config/global";
 import { ServerResponse } from "../type";
 import Joi from "joi";
 import InvariantError from "../errors/InvariantError";
+import SongsModel from "../models/SongsModel";
 
 export const exportPlaylistRouter: ServerRoute = {
   path: "/export/playlists/{playlistId}",
@@ -25,7 +26,12 @@ export const exportPlaylistRouter: ServerRoute = {
 
       if (error) throw new InvariantError(error.message);
 
-      await produce(RABBITMQ_QEUE, { target: targetEmail, playlist });
+      const songs = await SongsModel.getAll({ where: { id: playlist.songs } });
+      await produce(RABBITMQ_QEUE, {
+        target: targetEmail,
+        playlist,
+        songs: songs.map(({ id, title, performer }) => ({ id, title, performer })),
+      });
 
       const response: ServerResponse<never> = {
         status: "success",

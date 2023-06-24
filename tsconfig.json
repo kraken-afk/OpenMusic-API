@@ -4,7 +4,7 @@
     "module": "NodeNext",
     "outDir": "./dist",
     "baseUrl": ".",
-    "rootDir": ".",
+    "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
@@ -15,7 +15,6 @@
     "node_modules"
   ],
   "include": [
-    "src/server.ts",
-    "consumer/index.ts"
+    "src/server.ts"
   ]
 }
