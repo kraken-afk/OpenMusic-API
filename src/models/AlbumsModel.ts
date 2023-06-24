@@ -41,7 +41,9 @@ export default abstract class AlbumsModel {
 
   static async get(id: string): Promise<Album | null> {
     const album = await Albums.findByPk(id, { raw: true });
-    console.log(album);
+
+    if (!album) throw new NotFoundError(`Album with id: ${id} doesn't exist`);
+
     return album;
   }
 
@@ -92,5 +94,15 @@ export default abstract class AlbumsModel {
       };
       return response;
     }
+  }
+
+  static async getLikeCount(id: string): Promise<number> {
+    const album = await Albums.findByPk(id);
+
+    if (!album) throw new NotFoundError(`Album with id: ${id} doesn't exist`);
+
+    const likeCount = album.likeCount == null ? 0 : album.likeCount;
+
+    return likeCount;
   }
 }

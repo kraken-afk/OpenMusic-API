@@ -18,4 +18,9 @@ export const AlbumsModelAttributes: ModelAttributes = {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  likeCount: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+    allowNull: true
+  },
 };

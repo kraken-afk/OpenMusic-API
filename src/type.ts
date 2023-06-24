@@ -110,6 +110,15 @@ export interface CollaborationCreationPayload {
 }
 
 /// /////////////////////////////////////////
+//           Album Likes Scope            //
+/// ///////////////////////////////////////
+
+export interface AlbumLikesCreation {
+  albumId: string;
+  userId: string;
+}
+
+/// /////////////////////////////////////////
 //             Models Scope              //
 /// ///////////////////////////////////////
 

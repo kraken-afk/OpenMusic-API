@@ -4,6 +4,7 @@ import { CollaborationsModelAttributes } from "./scheme/CollaborationsModelAttri
 import { PlaylistActivitiesModelAttributes } from "./scheme/PlaylistActivitiesModelAttributes";
 import { PlaylistsModelAttributes } from "./scheme/PlaylistsModelAttributes";
 import { SongsModelAttributes } from "./scheme/SongsModelAttributes";
+import { UserAlbumLikesModelAttribute } from "./scheme/UserAlbumLikesModelAttribute";
 import { UsersModelAttributes } from "./scheme/UsersModelAttributes";
 import { Model, Sequelize } from "sequelize";
 
@@ -23,6 +24,7 @@ export class AlbumsScheme extends Model {
   declare name: string;
   declare year: number;
   declare coverUrl: string | null;
+  declare likeCount: number | null;
 }
 
 export class SongsScheme extends Model {
@@ -68,6 +70,11 @@ export class PlaylistActivitiesScheme extends Model {
   declare action: "add" | "delete";
 }
 
+export class UserAlbumLikesScheme extends Model {
+  declare albumId: string;
+  declare usersId: string[];
+}
+
 AlbumsScheme.init(AlbumsModelAttributes, {
   sequelize,
   modelName: "albums",
@@ -110,6 +117,12 @@ PlaylistActivitiesScheme.init(PlaylistActivitiesModelAttributes, {
   timestamps: false,
 });
 
+UserAlbumLikesScheme.init(UserAlbumLikesModelAttribute, {
+  sequelize,
+  modelName: "userAlbumLikes",
+  timestamps: false,
+});
+
 export async function databaseSync(): Promise<void> {
   await sequelize.sync();
   console.log("Database synced");
@@ -122,3 +135,4 @@ export const Auth = AuthenticationsScheme;
 export const Playlists = PlaylistsScheme;
 export const collaborations = CollaborationsScheme;
 export const Activities = PlaylistActivitiesScheme;
+export const UserAlbumLikes = UserAlbumLikesScheme;

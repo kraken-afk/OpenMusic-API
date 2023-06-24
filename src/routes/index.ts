@@ -6,6 +6,7 @@ import * as SongsRouter from "./songs";
 import * as UsersRouter from "./users";
 import * as ExportRouter from "./export";
 import * as UploadsRouter from "./uploads";
+import * as LikesRouter from "./likes";
 
 export const router = {
   ...AlbumsRouter,
@@ -16,4 +17,5 @@ export const router = {
   ...CollaborationsRouter,
   ...ExportRouter,
   ...UploadsRouter,
+  ...LikesRouter
 };
