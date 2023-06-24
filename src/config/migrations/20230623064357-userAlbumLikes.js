@@ -10,7 +10,10 @@ module.exports = {
    */
   async up(queryInterface, Sequelize) {
     const scheme = await importParse("src/config/scheme/UserAlbumLikesModelAttribute.ts");
-    await queryInterface.createTable("userAlbumLikes", scheme.UserAlbumLikesModelAttribute);
+    await queryInterface.createTable(
+      "userAlbumLikes",
+      scheme.UserAlbumLikesModelAttribute,
+    );
   },
 
   /**

@@ -3,18 +3,19 @@
     "target":"ES6",
     "module": "NodeNext",
     "outDir": "./dist",
-    "noEmit": true,
     "baseUrl": ".",
-    "rootDir": "src",
+    "rootDir": ".",
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "skipLibCheck": true
   },
   "exclude": [
     "node_modules"
   ],
   "include": [
-    "src"
+    "src/server.ts",
+    "consumer/index.ts"
   ]
 }

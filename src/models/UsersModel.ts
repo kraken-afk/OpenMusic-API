@@ -45,7 +45,7 @@ export default abstract class UsersModel {
   static async find({
     username,
     password,
-  }: UserAuth): Promise<DatabaseResponse<UsersScheme>> {
+  }: UserAuth): Promise<DatabaseResponse<Partial<UsersScheme>>> {
     const usn = await Users.findOne({ where: { username }, raw: true });
 
     if (usn == null) {
@@ -71,7 +71,7 @@ export default abstract class UsersModel {
       return response;
     }
 
-    const response: DatabaseResponsePositive<any> = {
+    const response: DatabaseResponsePositive<Partial<UsersScheme>> = {
       status: true,
       code: 201,
       data: { ...user },

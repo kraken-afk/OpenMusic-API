@@ -3,6 +3,7 @@ import { routeErrorHandler } from "../helpers/CommonErrorHandler";
 import { ServerResponse } from "../type";
 import UserAlbumLikesModel from "../models/UserAlbumLikesModel";
 import AlbumsModel from "../models/AlbumsModel";
+import { CacheClient } from "../cache";
 
 export const postLikesRouter: ServerRoute = {
   path: "/albums/{id}/likes",
@@ -103,6 +104,11 @@ export const getLikesCountRouter: ServerRoute = {
         "Content-Length",
         String(Buffer.byteLength(JSON.stringify(response), "utf-8")),
       );
+
+      // set the logic contrary of isChangedState because
+      // the state is changed before returning the value
+      if (CacheClient.isChangedState.fromCache) res.header("X-Data-Source", "cache");
+
       return res;
     } catch (error) {
       const response = routeErrorHandler(error);

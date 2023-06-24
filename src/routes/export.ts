@@ -25,7 +25,7 @@ export const exportPlaylistRouter: ServerRoute = {
 
       if (error) throw new InvariantError(error.message);
 
-      await produce(RABBITMQ_QEUE, { target: targetEmail, id: playlist.id });
+      await produce(RABBITMQ_QEUE, { target: targetEmail, playlist });
 
       const response: ServerResponse<never> = {
         status: "success",

@@ -17,5 +17,5 @@ export const router = {
   ...CollaborationsRouter,
   ...ExportRouter,
   ...UploadsRouter,
-  ...LikesRouter
+  ...LikesRouter,
 };

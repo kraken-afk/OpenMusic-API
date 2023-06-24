@@ -9,6 +9,7 @@ import {
 import { Albums } from "../config/init";
 import NotFoundError from "../errors/NotFoundError";
 import shortid from "shortid";
+import { CacheClient } from "../cache";
 
 export default abstract class AlbumsModel {
   static async create(data: AlbumsCreation): Promise<DatabaseResponse<DataAlbumCreated>> {
@@ -41,9 +42,6 @@ export default abstract class AlbumsModel {
 
   static async get(id: string): Promise<Album | null> {
     const album = await Albums.findByPk(id, { raw: true });
-
-    if (!album) throw new NotFoundError(`Album with id: ${id} doesn't exist`);
-
     return album;
   }
 
@@ -96,6 +94,7 @@ export default abstract class AlbumsModel {
     }
   }
 
+  @CacheClient.useCache()
   static async getLikeCount(id: string): Promise<number> {
     const album = await Albums.findByPk(id);
 

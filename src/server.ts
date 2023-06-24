@@ -2,7 +2,7 @@ import { databaseSync } from "./config/init";
 import { router } from "./routes";
 import * as Hapi from "@hapi/hapi";
 import * as Jwt from "@hapi/jwt";
-import * as Inert from "@hapi/inert"
+import * as Inert from "@hapi/inert";
 import { config } from "dotenv";
 import process from "node:process";
 

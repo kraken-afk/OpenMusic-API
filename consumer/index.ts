@@ -4,7 +4,6 @@ import { RABBITMQ_QEUE } from "../src/config/global";
 import { config } from "dotenv";
 import { createTransport } from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
-import PlaylistsModel from "../src/models/PlaylistsModel";
 import SongsModel from "../src/models/SongsModel";
 import InternalServerError from "../src/errors/InternalServerError";
 
@@ -26,7 +25,7 @@ async function onMessageHandler(msg: ConsumeMessage | null) {
   if (!msg) throw new InternalServerError("Error occurred while sending email");
 
   const { SMTP_HOST, SMTP_PORT, SMTP_USERNAME, SMTP_PASSWORD } = process.env;
-  const { target, id } = JSON.parse(msg.content.toString("utf-8"));
+  const { target, playlist } = JSON.parse(msg.content.toString("utf-8"));
   const transport = createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
@@ -37,7 +36,6 @@ async function onMessageHandler(msg: ConsumeMessage | null) {
       pass: SMTP_PASSWORD,
     },
   } as SMTPTransport.Options);
-  const playlist = await PlaylistsModel.getPlaylist(id);
   const songs = await SongsModel.getAll({ where: { id: playlist.songs } });
   const response = {
     playlist: {

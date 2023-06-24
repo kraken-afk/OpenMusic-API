@@ -13,5 +13,5 @@ export const UserAlbumLikesModelAttribute: ModelAttributes = {
   usersId: {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
-  }
+  },
 };
