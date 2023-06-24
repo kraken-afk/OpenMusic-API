@@ -9,7 +9,7 @@ const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = process.env;
 (async () => {
   await createDatabaseIfNotExists();
   await runMigrations();
-  compileTypeScript();
+  // compileTypeScript();
 })();
 
 function runMigrations() {

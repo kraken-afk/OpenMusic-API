@@ -58,6 +58,7 @@ export const loginRouter: ServerRoute = {
         );
         return res;
       } catch (error) {
+        console.error(error);
         response = {
           status: "fail",
           code: error.code,
@@ -103,6 +104,7 @@ export const refreshTokenRouter: ServerRoute = {
       );
       return res;
     } catch (error) {
+      console.error(error);
       const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(
@@ -151,6 +153,7 @@ export const deleteTokenRouter: ServerRoute = {
       );
       return res;
     } catch (error) {
+      console.error(error);
       const response = routeErrorHandler(error);
       const res = h.response(response).code(response.code);
       res.header(

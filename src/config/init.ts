@@ -1,12 +1,4 @@
-import { AlbumsModelAttributes } from "./scheme/AlbumsModelAttributes";
-import { AuthenticationModelAttributes } from "./scheme/AuthenticationModelAttributes";
-import { CollaborationsModelAttributes } from "./scheme/CollaborationsModelAttributes";
-import { PlaylistActivitiesModelAttributes } from "./scheme/PlaylistActivitiesModelAttributes";
-import { PlaylistsModelAttributes } from "./scheme/PlaylistsModelAttributes";
-import { SongsModelAttributes } from "./scheme/SongsModelAttributes";
-import { UserAlbumLikesModelAttribute } from "./scheme/UserAlbumLikesModelAttribute";
-import { UsersModelAttributes } from "./scheme/UsersModelAttributes";
-import { Model, Sequelize } from "sequelize";
+import { DataTypes, Model, Sequelize } from "sequelize";
 
 const { PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT } = process.env;
 const sequelize = new Sequelize({
@@ -75,53 +67,254 @@ export class UserAlbumLikesScheme extends Model {
   declare usersId: string[];
 }
 
-AlbumsScheme.init(AlbumsModelAttributes, {
-  sequelize,
-  modelName: "albums",
-  timestamps: false,
-});
+AlbumsScheme.init(
+  {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    year: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    coverUrl: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    likeCount: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: "albums",
+    timestamps: false,
+  },
+);
 
-SongsScheme.init(SongsModelAttributes, {
-  sequelize,
-  modelName: "songs",
-  timestamps: false,
-});
+SongsScheme.init(
+  {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    performer: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    genre: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    year: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    albumId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      references: {
+        model: "albums",
+        key: "id",
+      },
+    },
+  },
+  {
+    sequelize,
+    modelName: "songs",
+    timestamps: false,
+  },
+);
 
-UsersScheme.init(UsersModelAttributes, {
-  sequelize,
-  modelName: "users",
-  timestamps: false,
-});
+UsersScheme.init(
+  {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+    },
+    username: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    fullname: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "users",
+    timestamps: false,
+  },
+);
 
-AuthenticationsScheme.init(AuthenticationModelAttributes, {
-  sequelize,
-  modelName: "authentications",
-  timestamps: false,
-});
+AuthenticationsScheme.init(
+  {
+    token: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: "authentications",
+    timestamps: false,
+  },
+);
 
-PlaylistsScheme.init(PlaylistsModelAttributes, {
-  sequelize,
-  modelName: "playlists",
-  timestamps: false,
-});
+PlaylistsScheme.init(
+  {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    owner: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
+    },
+    songs: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: "playlists",
+    timestamps: false,
+  },
+);
 
-CollaborationsScheme.init(CollaborationsModelAttributes, {
-  sequelize,
-  modelName: "collaborations",
-  timestamps: false,
-});
+CollaborationsScheme.init(
+  {
+    id: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+    },
+    playlistId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "playlists",
+        key: "id",
+      },
+    },
+    userIds: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: false,
+      defaultValue: [],
+    },
+  },
+  {
+    sequelize,
+    modelName: "collaborations",
+    timestamps: false,
+  },
+);
 
-PlaylistActivitiesScheme.init(PlaylistActivitiesModelAttributes, {
-  sequelize,
-  modelName: "playlistActivities",
-  timestamps: false,
-});
+PlaylistActivitiesScheme.init(
+  {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+    },
+    playlistId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "playlists",
+        key: "id",
+      },
+    },
+    songId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "songs",
+        key: "id",
+      },
+    },
+    userId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "users",
+        key: "id",
+      },
+    },
+    time: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+      allowNull: false,
+    },
+    action: {
+      type: DataTypes.ENUM("add", "delete"),
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "playlistActivities",
+    timestamps: false,
+  },
+);
 
-UserAlbumLikesScheme.init(UserAlbumLikesModelAttribute, {
-  sequelize,
-  modelName: "userAlbumLikes",
-  timestamps: false,
-});
+UserAlbumLikesScheme.init(
+  {
+    albumId: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+      references: {
+        key: "id",
+        model: "albums",
+      },
+    },
+    usersId: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      allowNull: true,
+    },
+  },
+  {
+    sequelize,
+    modelName: "userAlbumLikes",
+    timestamps: false,
+  },
+);
+
+AuthenticationsScheme.removeAttribute("id");
 
 export async function databaseSync(): Promise<void> {
   await sequelize.sync();
