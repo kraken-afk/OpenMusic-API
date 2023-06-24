@@ -6,7 +6,7 @@ It's basically a REST API where users can add songs, albums, and playlists, as w
 
 ## Built with
 - TypeScript
-  * A language used for create this project
+  * A language used for making this project
 - Hapi Framework
   * back-end framework.
 - Sequelize
