@@ -1,5 +1,7 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
+// TODO: Organize this
+
 const { PGUSER, PGPASSWORD, PGDATABASE, PGHOST, PGPORT } = process.env;
 const sequelize = new Sequelize({
   database: PGDATABASE,

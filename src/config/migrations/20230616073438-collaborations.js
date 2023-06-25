@@ -1,5 +1,4 @@
 "use strict";
-const { importParse } = require("../../libs/TypeScriptParser");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -8,13 +7,29 @@ module.exports = {
    * @param {(import('sequelize').QueryInterface))} queryInterface
    * @param {(import('sequelize').Sequelize)} Sequelize
    */
-  async up(queryInterface, Sequelize) {
-    const scheme = await importParse(
-      "src/config/scheme/CollaborationsModelAttributes.ts",
-    );
+  async up(queryInterface, { DataTypes }) {
     await queryInterface.createTable(
       "collaborations",
-      scheme.CollaborationsModelAttributes,
+      {
+        id: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          primaryKey: true,
+        },
+        playlistId: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          references: {
+            model: "playlists",
+            key: "id",
+          },
+        },
+        userIds: {
+          type: DataTypes.ARRAY(DataTypes.STRING),
+          allowNull: false,
+          defaultValue: [],
+        },
+      }
     );
   },
 

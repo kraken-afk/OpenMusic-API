@@ -1,5 +1,4 @@
 "use strict";
-const { importParse } = require("../../libs/TypeScriptParser");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
@@ -8,13 +7,15 @@ module.exports = {
    * @param {(import('sequelize').QueryInterface))} queryInterface
    * @param {(import('sequelize').Sequelize)} Sequelize
    */
-  async up(queryInterface, Sequelize) {
-    const scheme = await importParse(
-      "src/config/scheme/AuthenticationModelAttributes.ts",
-    );
+  async up(queryInterface, { DataTypes }) {
     await queryInterface.createTable(
       "authentications",
-      scheme.AuthenticationModelAttributes,
+      {
+        token: {
+          type: DataTypes.TEXT,
+          allowNull: true,
+        },
+      }
     );
   },
 
