@@ -45,9 +45,11 @@ export default class CacheClientConstructor {
         const key = createCacheKey(albumId);
         const client = await createCacheClient();
 
-        if (changhedState[albumId]) {
+        if (changhedState[albumId] && !(await client.get(key))) {
           const count = await method.call(this, albumId);
-          await client.set(key, count);
+          await client.set(key, count, {
+            EX: 1800
+          });
 
           // set isChanged to null because a new cache was stored
           changhedState[albumId] = null;

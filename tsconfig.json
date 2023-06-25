@@ -6,7 +6,7 @@
     "baseUrl": ".",
     "rootDir": "./src",
     "allowSyntheticDefaultImports": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "experimentalDecorators": true,
     "strictNullChecks": true,
     "skipLibCheck": true
