@@ -13,7 +13,6 @@ export default abstract class AuthenticationsModel {
       await Auth.create({ token });
       return true;
     } catch (error) {
-      console.error(error)
       throw new InternalServerError("Internal server error");
     }
   }
